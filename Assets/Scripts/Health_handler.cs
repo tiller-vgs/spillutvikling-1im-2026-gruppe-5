@@ -5,7 +5,7 @@ public class Health_handler : MonoBehaviour
 {
     public GameObject health_counter; //make dynamic
 
-    private TextMeshPro txt;
+    private Transform tf; //lol
 
     private float health = 10;
 
@@ -20,6 +20,11 @@ public class Health_handler : MonoBehaviour
     void Update()
     {
         
+    }
+
+    private void OnEnable()
+    {
+        tf = GetComponent<Transform>();
     }
 
     public void take_damage(int damage)

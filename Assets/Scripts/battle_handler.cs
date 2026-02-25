@@ -2,11 +2,17 @@ using UnityEngine;
 
 public class battle_handler : MonoBehaviour
 {
-    public Transform options;
-
     public GameObject player;
 
-    public GameObject enemy; //Make this system dymaic in the furure
+    public GameObject enemies; 
+
+    private GameObject enemy;
+
+    private Transform tf;
+
+    private Transform options;
+
+    private int target;
 
     public bool player_turn = true;
 
@@ -28,13 +34,16 @@ public class battle_handler : MonoBehaviour
     {
         if (player_turn == false)
         {
-            hide_options();  //FIX
+            hide_options();  
         }
+
+        tf = GetComponent<Transform>();
+        options = tf.Find("Canvas/Player_buttons").transform;
     }
 
     private void FixedUpdate()
     {
-        if (player_turn == true && options.position.y < 250) 
+        if (player_turn == true && options.position.y < 200) 
         {
             //Debug.Log("movin' up");
             options.position = new Vector2(options.position.x, options.position.y + 20);
@@ -52,9 +61,19 @@ public class battle_handler : MonoBehaviour
         options.position = new Vector2(options.position.x, options.position.y - 160);
     }
 
-    public void attack()
+    public void GetSelectedEnemy(int index)
     {
-        Debug.Log($"Attacking");
-        enemy.GetComponent<Health_handler>().take_damage(1);
+        target = index;
+    }
+
+    public void attack(int damage = 1)//the damage int is for debuging
+    {
+        enemy = enemies.GetComponent<Transform>().Find($"enemy_{target}").gameObject;
+        enemy.GetComponent<Health_handler>().take_damage(damage); //this should take in and work with the wepon system, but it is not made yet
+    }
+
+    public void get_attacked(int damage = 1)
+    {
+        player.GetComponent<Health_handler>().take_damage(damage);
     }
 }

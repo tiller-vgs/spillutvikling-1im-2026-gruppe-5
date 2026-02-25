@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class set_health : MonoBehaviour
 {
-    public TextMeshProUGUI txt;
+    private TextMeshProUGUI txt;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -14,6 +14,11 @@ public class set_health : MonoBehaviour
     void Update()
     {
         
+    }
+
+    private void OnEnable()
+    {
+        txt = GetComponent<TextMeshProUGUI>();
     }
 
     public void setHealth(float health, float max_health)
