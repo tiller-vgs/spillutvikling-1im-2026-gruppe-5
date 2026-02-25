@@ -7,9 +7,9 @@ public class Health_handler : MonoBehaviour
 
     private Transform tf; //lol
 
-    private float health = 10;
+    public float health = 10;
 
-    private float max_health = 10;
+    public float max_health = 10;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

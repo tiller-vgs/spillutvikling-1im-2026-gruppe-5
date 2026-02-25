@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 69798296}
   - component: {fileID: 69798298}
   - component: {fileID: 69798297}
+  - component: {fileID: 69798299}
   m_Layer: 5
   m_Name: Health_counter
   m_TagString: Untagged
@@ -256,6 +257,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 69798295}
   m_CullTransparentMesh: 1
+--- !u!114 &69798299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 69798295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f74a59a54deba644b6d412a8dbce796, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::set_health
 --- !u!1 &140793386
 GameObject:
   m_ObjectHideFlags: 0
@@ -888,7 +901,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 416191949}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2045413250}
+        m_TargetAssemblyTypeName: battle_handler, Assembly-CSharp
+        m_MethodName: get_attacked
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &416191949
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1075,8 +1100,9 @@ GameObject:
   - component: {fileID: 731536109}
   - component: {fileID: 731536108}
   - component: {fileID: 731536110}
+  - component: {fileID: 731536111}
   m_Layer: 0
-  m_Name: Enemy
+  m_Name: enemy_0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1170,6 +1196,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   health_counter: {fileID: 881425522}
+  health: 10
+  max_health: 10
+--- !u!114 &731536111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 731536107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5eb8a85a807573a4f9964da1eec00f9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::attacker
 --- !u!1 &793470186
 GameObject:
   m_ObjectHideFlags: 0
@@ -1466,6 +1506,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 997688244}
+  - component: {fileID: 997688245}
   m_Layer: 0
   m_Name: Enemies
   m_TagString: Untagged
@@ -1489,6 +1530,19 @@ Transform:
   - {fileID: 731536109}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &997688245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 997688243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6e02364272a2904692637b23f4ac187, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::enemy_handler
+  battler: {fileID: 2045413249}
 --- !u!1 &1063072444
 GameObject:
   m_ObjectHideFlags: 0
@@ -1696,11 +1750,11 @@ MonoBehaviour:
       - m_Target: {fileID: 2045413250}
         m_TargetAssemblyTypeName: battle_handler, Assembly-CSharp
         m_MethodName: attack
-        m_Mode: 1
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: ("attack", 5.0f)
           m_BoolArgument: 0
@@ -1839,7 +1893,7 @@ RectTransform:
   m_Children:
   - {fileID: 793470187}
   - {fileID: 69798296}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1937161033}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1995,7 +2049,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1755685261}
   m_Layer: 5
-  m_Name: Player buttons
+  m_Name: Player_buttons
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2135,6 +2189,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1937161033}
   - component: {fileID: 1937161032}
+  - component: {fileID: 1937161034}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -2213,9 +2268,25 @@ Transform:
   m_LocalPosition: {x: -8, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2.5, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1472799240}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1937161034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1937161031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd0059528ac78984da966d373b410403, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Health_handler
+  health_counter: {fileID: 69798295}
+  health: 10
+  max_health: 10
 --- !u!1 &2045413249
 GameObject:
   m_ObjectHideFlags: 0
@@ -2245,9 +2316,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6275a124501d71b41b6b06a41778fd1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  options: {fileID: 1755685261}
   player: {fileID: 1937161031}
-  enemy: {fileID: 731536107}
+  enemies: {fileID: 997688243}
   player_turn: 1
 --- !u!4 &2045413251
 Transform:
@@ -2272,6 +2342,5 @@ SceneRoots:
   - {fileID: 223944848}
   - {fileID: 1937161033}
   - {fileID: 997688244}
-  - {fileID: 1472799240}
   - {fileID: 214391961}
   - {fileID: 2045413251}
