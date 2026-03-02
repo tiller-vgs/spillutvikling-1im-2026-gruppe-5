@@ -87,7 +87,7 @@ public class battle_handler : MonoBehaviour
             Invoke("hide_options", 0.3f);
             yield return new WaitForSeconds(1);
             enemy = enemies.GetComponent<Transform>().Find($"enemy_{target}").gameObject;
-            enemy.GetComponent<Health_handler>().take_damage(damage); //this should take in and work with the wepon system, but it is not made yet, if ever
+            enemy.GetComponent<Health_handler>().take_damage(damage); //this should take in and work with the wepon system, but it is not made yet, if ever gets made
             Invoke("enemy_turn", 2f);
         }
     }

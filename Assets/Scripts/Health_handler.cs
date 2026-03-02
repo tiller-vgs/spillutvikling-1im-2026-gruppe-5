@@ -7,6 +7,8 @@ public class Health_handler : MonoBehaviour
 
     private Transform tf; //lol
 
+    private ParticleSystem par;
+
     public float health = 10;
 
     public float max_health = 10;
@@ -25,11 +27,13 @@ public class Health_handler : MonoBehaviour
     private void OnEnable()
     {
         tf = GetComponent<Transform>();
+        par = GetComponent<ParticleSystem>();
     }
 
     public void take_damage(int damage)
     {
         health -= damage;
         health_counter.GetComponent<set_health>().setHealth(health, max_health);
+        par.Play();
     }
 }
