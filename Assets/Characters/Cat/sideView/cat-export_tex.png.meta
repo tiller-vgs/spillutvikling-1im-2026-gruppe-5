@@ -1,34 +1,34 @@
 fileFormatVersion: 2
-guid: fabc1f0c2c8cd204d91b18e1ba7a523f
+guid: c40e55c1b332163489fcd34dacc92492
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2679158607092704225
-    second: sideCat_tex_0
+      213: -7334650816572986012
+    second: cat-export_tex_0
   - first:
-      213: 5811721505768274551
-    second: sideCat_tex_1
+      213: 1266965797883355166
+    second: cat-export_tex_1
   - first:
-      213: 6169718972810988291
-    second: sideCat_tex_2
+      213: 5617149501111944110
+    second: cat-export_tex_2
   - first:
-      213: -3440963455359858511
-    second: sideCat_tex_3
+      213: 3513406294435357476
+    second: cat-export_tex_3
   - first:
-      213: -8669009154178743182
-    second: sideCat_tex_4
+      213: 6422853593301016630
+    second: cat-export_tex_4
   - first:
-      213: 4084716053364294586
-    second: sideCat_tex_5
+      213: 6612354276756965139
+    second: cat-export_tex_5
   - first:
-      213: 2406254426606176749
-    second: sideCat_tex_6
+      213: 2379467200088312718
+    second: cat-export_tex_6
   - first:
-      213: -411704817351272158
-    second: sideCat_tex_7
+      213: -8751987209771631429
+    second: cat-export_tex_7
   - first:
-      213: 9210007976752265403
-    second: sideCat_tex_8
+      213: 2722558326948315094
+    second: cat-export_tex_8
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -137,7 +137,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: sideCat_tex_0
+      name: cat-export_tex_0
       rect:
         serializedVersion: 2
         x: 0
@@ -152,14 +152,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f1c1f4f0177b1dad0800000000000000
-      internalID: -2679158607092704225
+      spriteID: 46d63a661f5163a90800000000000000
+      internalID: -7334650816572986012
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: sideCat_tex_1
+      name: cat-export_tex_1
       rect:
         serializedVersion: 2
         x: 182
@@ -174,14 +174,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 77af0dceae167a050800000000000000
-      internalID: 5811721505768274551
+      spriteID: e1028653eaa259110800000000000000
+      internalID: 1266965797883355166
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: sideCat_tex_2
+      name: cat-export_tex_2
       rect:
         serializedVersion: 2
         x: 182
@@ -196,14 +196,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 30b036a97be3f9550800000000000000
-      internalID: 6169718972810988291
+      spriteID: ea34a08d5bf14fd40800000000000000
+      internalID: 5617149501111944110
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: sideCat_tex_3
+      name: cat-export_tex_3
       rect:
         serializedVersion: 2
         x: 285
@@ -218,14 +218,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1b8cc26e7fd3f30d0800000000000000
-      internalID: -3440963455359858511
+      spriteID: 423e073f86022c030800000000000000
+      internalID: 3513406294435357476
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: sideCat_tex_4
+      name: cat-export_tex_4
       rect:
         serializedVersion: 2
         x: 362
@@ -240,14 +240,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 274019aca1e71b780800000000000000
-      internalID: -8669009154178743182
+      spriteID: 6306c09305f822950800000000000000
+      internalID: 6422853593301016630
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: sideCat_tex_5
+      name: cat-export_tex_5
       rect:
         serializedVersion: 2
         x: 0
@@ -262,14 +262,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ab34d19db93dfa830800000000000000
-      internalID: 4084716053364294586
+      spriteID: 31742235e2dc3cb50800000000000000
+      internalID: 6612354276756965139
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: sideCat_tex_6
+      name: cat-export_tex_6
       rect:
         serializedVersion: 2
         x: 0
@@ -284,14 +284,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: de98211f6abb46120800000000000000
-      internalID: 2406254426606176749
+      spriteID: e8b05ffbfc0950120800000000000000
+      internalID: 2379467200088312718
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: sideCat_tex_7
+      name: cat-export_tex_7
       rect:
         serializedVersion: 2
         x: 158
@@ -306,14 +306,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 229d57166a4594af0800000000000000
-      internalID: -411704817351272158
+      spriteID: bbcbcc2b002ba8680800000000000000
+      internalID: -8751987209771631429
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: sideCat_tex_8
+      name: cat-export_tex_8
       rect:
         serializedVersion: 2
         x: 260
@@ -328,8 +328,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bb835d8457580df70800000000000000
-      internalID: 9210007976752265403
+      spriteID: 6df3906af5878c520800000000000000
+      internalID: 2722558326948315094
       vertices: []
       indices: 
       edges: []
@@ -348,15 +348,15 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      sideCat_tex_0: -2679158607092704225
-      sideCat_tex_1: 5811721505768274551
-      sideCat_tex_2: 6169718972810988291
-      sideCat_tex_3: -3440963455359858511
-      sideCat_tex_4: -8669009154178743182
-      sideCat_tex_5: 4084716053364294586
-      sideCat_tex_6: 2406254426606176749
-      sideCat_tex_7: -411704817351272158
-      sideCat_tex_8: 9210007976752265403
+      cat-export_tex_0: -7334650816572986012
+      cat-export_tex_1: 1266965797883355166
+      cat-export_tex_2: 5617149501111944110
+      cat-export_tex_3: 3513406294435357476
+      cat-export_tex_4: 6422853593301016630
+      cat-export_tex_5: 6612354276756965139
+      cat-export_tex_6: 2379467200088312718
+      cat-export_tex_7: -8751987209771631429
+      cat-export_tex_8: 2722558326948315094
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
