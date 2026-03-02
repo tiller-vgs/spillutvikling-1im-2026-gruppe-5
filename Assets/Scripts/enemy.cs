@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class attacker : MonoBehaviour
 {
+    
 
     private Transform tf; 
 
@@ -20,11 +22,16 @@ public class attacker : MonoBehaviour
         
     }
 
+    public float report_health()
+    {
+        health = tf.GetComponent<Health_handler>().health;
+        max_health = tf.GetComponent<Health_handler>().max_health;
+        return health;
+    }
+
     public void attack_as(int index)
     {
-        tf.GetComponent<Health_handler>().health = health;
-        tf.GetComponent<Health_handler>().max_health = max_health;
-
+        
     }
 
     private void OnEnable()

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class battle_handler : MonoBehaviour
 {
+    public GameObject winner;
+
     public GameObject player;
 
     public GameObject enemies; 
@@ -100,5 +102,9 @@ public class battle_handler : MonoBehaviour
     public void get_attacked(int damage = 1)
     {
         player.GetComponent<Health_handler>().take_damage(damage);
+    }
+    public void win()
+    {
+        winner.gameObject.SetActive(true);
     }
 }

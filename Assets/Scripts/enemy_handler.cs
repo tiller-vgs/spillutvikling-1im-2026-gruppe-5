@@ -1,4 +1,6 @@
+using NUnit.Framework;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using static Unity.VisualScripting.Metadata;
 using static UnityEngine.GraphicsBuffer;
@@ -9,11 +11,9 @@ public class enemy_handler : MonoBehaviour
 
     public GameObject battler;
 
-    private int child_count;
+    private List<int> alive_children = new List<int>();
 
-    private object child_0;
-    private object child_1;
-    private object child_2;
+    private int child_count;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -35,14 +35,24 @@ public class enemy_handler : MonoBehaviour
     public void your_turn()
     {
         GetChildren();
-        StartCoroutine(Fightchildren());
-        battler.GetComponent<battle_handler>().show_options();
+        StartCoroutine(Get_alive());
+        if (alive_children.Count > 0)
+        {
+            StartCoroutine(Fightchildren());
+            battler.GetComponent<battle_handler>().show_options();
+        }
+        else if (alive_children.Count == 0)
+        {
+            Debug.Log(alive_children.Count);
+            battler.GetComponent<battle_handler>().win();
+        }
+        
     }
 
 
     public void GetChildren()
     {
-        int child_count = tf.childCount;
+        child_count = tf.childCount;
         Debug.Log($"there are {child_count} enemies");
     }
 
@@ -57,9 +67,20 @@ public class enemy_handler : MonoBehaviour
         yield return null;
     }
 
-    public IEnumerator Get_health(int child_count)
+    public IEnumerator Get_alive()
     {
-        yield return true;
+        alive_children.Clear();
+        var child = tf.GetChild(0);
+        for (int i = 0; i < child_count; i++)
+        {
+            child = tf.GetChild(i);
+            float hp = child.GetComponent<attacker>().report_health();
+            if (hp > 0)
+            { 
+                alive_children.Add(i);
+            }
+        }
+        yield return null;
     }
 }
 

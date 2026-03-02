@@ -31,8 +31,8 @@ public class Health_handler : MonoBehaviour
     }
 
     public void take_damage(int damage)
-    {
-        health -= damage;
+    { 
+        health = health - damage;
         health_counter.GetComponent<set_health>().setHealth(health, max_health);
         par.Play();
     }
