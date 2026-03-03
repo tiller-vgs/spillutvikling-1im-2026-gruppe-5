@@ -205,8 +205,8 @@ Transform:
   m_GameObject: {fileID: 521839958}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.09, y: 3.69, z: 0}
-  m_LocalScale: {x: 2.7567, y: 1.0975374, z: 1}
+  m_LocalPosition: {x: -4.21, y: 0.94, z: 0}
+  m_LocalScale: {x: 1, y: 2.7521, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -267,10 +267,8 @@ GameObject:
   m_Component:
   - component: {fileID: 818395009}
   - component: {fileID: 818395008}
-  - component: {fileID: 818395010}
-  - component: {fileID: 818395011}
   m_Layer: 0
-  m_Name: Enemy1
+  m_Name: enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -344,79 +342,12 @@ Transform:
   m_GameObject: {fileID: 818395007}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.99, y: -0.61, z: 0}
+  m_LocalPosition: {x: 3.23, y: 1.31, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!50 &818395010
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 818395007}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 4
---- !u!114 &818395011
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 818395007}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f0f3a7d8ea34df4a8d9c511b7b82231, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  sideSkeletonData: {fileID: 4900000, guid: 260c0020be029674aab35eef4b39b0ca, type: 3}
-  sideTextureAtlasData: {fileID: 4900000, guid: e366ba15f749ecd41ad1b31139f26854, type: 3}
-  sideTextureAtlasTexture: {fileID: 2800000, guid: dfe097fb69d37f7409dc054e1f996531, type: 3}
-  sideDragonBonesDataName: enemy1_ske
-  sideArmatureName: armature1
-  sideWalkingAnimationName: walkingAnimation
-  frontSkeletonData: {fileID: 0}
-  frontTextureAtlasData: {fileID: 0}
-  frontTextureAtlasTexture: {fileID: 0}
-  frontDragonBonesDataName: 
-  frontArmatureName: 
-  frontWalkingAnimationName: 
-  backSkeletonData: {fileID: 0}
-  backTextureAtlasData: {fileID: 0}
-  backTextureAtlasTexture: {fileID: 0}
-  backDragonBonesDataName: 
-  backArmatureName: 
-  backWalkingAnimationName: 
-  hideSourceSpriteRenderer: 1
-  sideVisualOffset: {x: 0, y: 0, z: 0}
-  sideVisualScale: {x: 1, y: 1, z: 1}
-  frontVisualOffset: {x: 0, y: 0, z: 0}
-  frontVisualScale: {x: 1, y: 1, z: 1}
-  backVisualOffset: {x: 0, y: 0, z: 0}
-  backVisualScale: {x: 1, y: 1, z: 1}
-  armatureScale: 0.01
-  textureScale: 1
-  moveThreshold: 0.05
 --- !u!1 &1484642416
 GameObject:
   m_ObjectHideFlags: 0
@@ -520,7 +451,7 @@ Transform:
   m_GameObject: {fileID: 1484642416}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.51, y: -0.67, z: 0}
+  m_LocalPosition: {x: 0.01, y: -1.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -733,7 +664,7 @@ Camera:
   m_Curvature: {x: 2, y: 11}
   m_BarrelClipping: 0.25
   m_Anamorphism: 0
-  m_SensorSize: {x: 16, y: 9}
+  m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
