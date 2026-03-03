@@ -1,53 +1,39 @@
 using DragonBones;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Rigidbody2D))]
-public class DirectionalDragonBonesView : MonoBehaviour
+public class PlayerDragonBonesView : MonoBehaviour
 {
-    [Header("Side View")]
-    [FormerlySerializedAs("skeletonData")]
-    public TextAsset sideSkeletonData;
-    [FormerlySerializedAs("textureAtlasData")]
-    public TextAsset sideTextureAtlasData;
-    [FormerlySerializedAs("textureAtlasTexture")]
-    public Texture2D sideTextureAtlasTexture;
-    [FormerlySerializedAs("dragonBonesDataName")]
-    public string sideDragonBonesDataName = string.Empty;
-    [FormerlySerializedAs("armatureName")]
-    public string sideArmatureName = string.Empty;
-    [FormerlySerializedAs("walkingAnimationName")]
-    public string sideWalkingAnimationName = string.Empty;
-
-    [Header("Front View")]
+    [Header("DragonBones Assets")]
+    public TextAsset skeletonData;
+    public TextAsset textureAtlasData;
+    public Texture2D textureAtlasTexture;
+    public string dragonBonesDataName = "cat-export_ske";
+    public string armatureName = "armature1";
+    public string walkingAnimationName = "walkingAnimation";
     public TextAsset frontSkeletonData;
     public TextAsset frontTextureAtlasData;
     public Texture2D frontTextureAtlasTexture;
-    public string frontDragonBonesDataName = string.Empty;
-    public string frontArmatureName = string.Empty;
-    public string frontWalkingAnimationName = string.Empty;
-
-    [Header("Back View")]
+    public string frontDragonBonesDataName = "frontCat_ske";
+    public string frontArmatureName = "armature1";
+    public string frontWalkingAnimationName = "walkingAnimation";
     public TextAsset backSkeletonData;
     public TextAsset backTextureAtlasData;
     public Texture2D backTextureAtlasTexture;
-    public string backDragonBonesDataName = string.Empty;
-    public string backArmatureName = string.Empty;
-    public string backWalkingAnimationName = string.Empty;
+    public string backDragonBonesDataName = "backSide_ske";
+    public string backArmatureName = "armature1";
+    public string backWalkingAnimationName = "walkingAnimation";
 
     [Header("View")]
     public bool hideSourceSpriteRenderer = true;
-    [FormerlySerializedAs("visualOffset")]
-    public Vector3 sideVisualOffset = Vector3.zero;
-    [FormerlySerializedAs("visualScale")]
-    public Vector3 sideVisualScale = Vector3.one;
+    public Vector3 visualOffset = Vector3.zero;
+    public Vector3 visualScale = Vector3.one;
     public Vector3 frontVisualOffset = Vector3.zero;
-    public Vector3 frontVisualScale = Vector3.one;
+    public Vector3 frontVisualScale = new Vector3(-1f, 1f, 1f);
     public Vector3 backVisualOffset = Vector3.zero;
-    public Vector3 backVisualScale = Vector3.one;
-    public int sortingOrderOffset = 0;
+    public Vector3 backVisualScale = new Vector3(-1f, 1f, 1f);
     public float armatureScale = 0.01f;
     public float textureScale = 1f;
     public float moveThreshold = 0.05f;
@@ -72,21 +58,19 @@ public class DirectionalDragonBonesView : MonoBehaviour
     private Vector3 _backBaseVisualScale = Vector3.one;
     private ViewMode _lastViewMode = ViewMode.Side;
     private bool _isRestPoseApplied;
-    private bool _isInitialized;
 
     private void Awake()
     {
-        CacheComponents();
-        RefreshView();
+        _rb = GetComponent<Rigidbody2D>();
+        _sourceSpriteRenderer = GetComponent<SpriteRenderer>();
+
+        BuildArmaturesIfNeeded();
+        SetActiveView(ResolveDesiredViewMode());
+        UpdateAnimationState();
     }
 
     private void Update()
     {
-        if (!_isInitialized)
-        {
-            RefreshView();
-        }
-
         if (_sideArmatureComponent == null &&
             _frontArmatureComponent == null &&
             _backArmatureComponent == null)
@@ -99,53 +83,21 @@ public class DirectionalDragonBonesView : MonoBehaviour
         UpdateAnimationState();
     }
 
-    public void RefreshView()
-    {
-        CacheComponents();
-        BuildArmaturesIfNeeded();
-
-        _isInitialized =
-            _sideArmatureComponent != null ||
-            _frontArmatureComponent != null ||
-            _backArmatureComponent != null;
-
-        if (!_isInitialized)
-        {
-            return;
-        }
-
-        SetActiveView(ResolveDesiredViewMode());
-        UpdateAnimationState();
-    }
-
-    private void CacheComponents()
-    {
-        if (_rb == null)
-        {
-            _rb = GetComponent<Rigidbody2D>();
-        }
-
-        if (_sourceSpriteRenderer == null)
-        {
-            _sourceSpriteRenderer = GetComponent<SpriteRenderer>();
-        }
-    }
-
     private void BuildArmaturesIfNeeded()
     {
         if (_sideArmatureComponent == null)
         {
             _sideArmatureComponent = BuildArmature(
-                sideSkeletonData,
-                sideTextureAtlasData,
-                sideTextureAtlasTexture,
-                sideDragonBonesDataName,
-                sideArmatureName,
-                sideVisualOffset,
-                sideVisualScale,
-                "SideArmature"
+                skeletonData,
+                textureAtlasData,
+                textureAtlasTexture,
+                dragonBonesDataName,
+                armatureName,
+                visualOffset,
+                visualScale,
+                "CatArmatureSide"
             );
-            _sideBaseVisualScale = sideVisualScale;
+            _sideBaseVisualScale = visualScale;
         }
 
         if (_frontArmatureComponent == null && HasFrontViewAssets())
@@ -158,7 +110,7 @@ public class DirectionalDragonBonesView : MonoBehaviour
                 frontArmatureName,
                 frontVisualOffset,
                 frontVisualScale,
-                "FrontArmature"
+                "CatArmatureFront"
             );
             _frontBaseVisualScale = frontVisualScale;
         }
@@ -173,7 +125,7 @@ public class DirectionalDragonBonesView : MonoBehaviour
                 backArmatureName,
                 backVisualOffset,
                 backVisualScale,
-                "BackArmature"
+                "CatArmatureBack"
             );
             _backBaseVisualScale = backVisualScale;
         }
@@ -334,6 +286,7 @@ public class DirectionalDragonBonesView : MonoBehaviour
         bool isMovingDown = velocity.y < -moveThreshold;
         bool isMovingUp = velocity.y > moveThreshold;
 
+        // On diagonal input, horizontal movement has priority over front/back views.
         if (hasHorizontalInput && hasVerticalInput && _sideArmatureComponent != null)
         {
             return ViewMode.Side;
@@ -415,7 +368,7 @@ public class DirectionalDragonBonesView : MonoBehaviour
         }
         else
         {
-            _activeWalkingAnimationName = sideWalkingAnimationName;
+            _activeWalkingAnimationName = walkingAnimationName;
         }
 
         _activeAnimation = string.Empty;
@@ -465,26 +418,10 @@ public class DirectionalDragonBonesView : MonoBehaviour
             return;
         }
 
-        Renderer[] renderers = armatureComponent.GetComponentsInChildren<Renderer>();
-        if (renderers.Length == 0)
-        {
-            return;
-        }
-
-        int minSortingOrder = int.MaxValue;
-        foreach (Renderer renderer in renderers)
-        {
-            if (renderer.sortingOrder < minSortingOrder)
-            {
-                minSortingOrder = renderer.sortingOrder;
-            }
-        }
-
-        int baseSortingOrder = _sourceSpriteRenderer.sortingOrder + sortingOrderOffset;
-        foreach (Renderer renderer in renderers)
+        foreach (Renderer renderer in armatureComponent.GetComponentsInChildren<Renderer>())
         {
             renderer.sortingLayerID = _sourceSpriteRenderer.sortingLayerID;
-            renderer.sortingOrder = baseSortingOrder + (renderer.sortingOrder - minSortingOrder);
+            renderer.sortingOrder = _sourceSpriteRenderer.sortingOrder;
         }
     }
 
