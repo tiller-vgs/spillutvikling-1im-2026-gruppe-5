@@ -62,7 +62,7 @@ public class enemy_handler : MonoBehaviour
         for (int i = 0; i < child_count; i++)
         {
             child = tf.GetChild(i);
-            //child.GetComponent<enemy>().attack_as(i);
+            child.GetComponent<attacker>().attack_as(i);
         }
         yield return null;
     }

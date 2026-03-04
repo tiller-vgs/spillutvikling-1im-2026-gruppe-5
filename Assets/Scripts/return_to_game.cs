@@ -26,7 +26,7 @@ public class return_to_game : MonoBehaviour
     {
         Trans.SetTrigger("Start");
         Debug.Log("Loading back to the overworld");
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(2);
         SceneManager.LoadScene(level); //change to the new name
         yield return null;
     }

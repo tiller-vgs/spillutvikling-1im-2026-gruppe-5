@@ -424,7 +424,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &140793387
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -611,7 +611,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &209808280
 MonoBehaviour:
@@ -1800,6 +1800,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eb8a85a807573a4f9964da1eec00f9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::attacker
+  damage: 1
+  MaxHeal: 4
+  DoAttack: 6
+  DoNothing: 1
 --- !u!199 &731536112
 ParticleSystemRenderer:
   serializedVersion: 7
@@ -7305,7 +7309,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &997505152
 Transform:
   m_ObjectHideFlags: 0
@@ -7640,7 +7644,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1472799237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7848,8 +7852,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 48
+  m_fontSizeBase: 48
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -8132,7 +8136,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1840048607
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8339,7 +8343,7 @@ GameObject:
   - component: {fileID: 2045413251}
   - component: {fileID: 2045413250}
   m_Layer: 0
-  m_Name: Battle handler
+  m_Name: Battle_handler
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

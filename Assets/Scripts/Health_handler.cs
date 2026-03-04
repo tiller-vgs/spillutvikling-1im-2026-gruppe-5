@@ -48,14 +48,18 @@ public class Health_handler : MonoBehaviour
     {
         health = health - damage;
         health_counter.GetComponent<set_health>().setHealth(health, max_health);
-        if (health > 0)
+        if (gameObject.name == "!Player")
         {
-            StartCoroutine(play_hit());
+            if (health > 0)
+            {
+                StartCoroutine(play_hit());
+            }
+            else
+            {
+                StartCoroutine(play_death());
+            }
         }
-        else
-        {
-            StartCoroutine(play_death());
-        }
+
     }
     private IEnumerator play_hit()
     {
