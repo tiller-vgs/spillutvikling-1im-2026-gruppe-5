@@ -38,6 +38,6 @@ public class EnemyWalker : MonoBehaviour
             return;
         }
 
-        _body.linearVelocity = Vector2.left * moveSpeed;
+        _body.linearVelocity = Vector2.zero;
     }
 }
