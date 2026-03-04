@@ -14,7 +14,6 @@ public class Player_controller : MonoBehaviour
 
     public InputActionAsset inputsystem;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         Debug.Log("Run script working as intended");
@@ -27,9 +26,12 @@ public class Player_controller : MonoBehaviour
         move_act = playermMap.FindAction("Move");
 
         rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.constraints |= RigidbodyConstraints2D.FreezeRotation;
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
         move_dir = move_act.ReadValue<Vector2>();
