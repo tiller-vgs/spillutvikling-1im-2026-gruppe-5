@@ -1,13 +1,11 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class return_to_game : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public Animator Trans; //lol
+
     private void OnEnable()
     {
         
@@ -19,10 +17,19 @@ public class return_to_game : MonoBehaviour
         
     }
 
-    public void go_back_to_game()
+    public void load_level(string level)
     {
-        Debug.Log("Loading back to gameplay");
-        //SceneManager.LoadScene("test"); //change to the new name
+        StartCoroutine(loading_level(level));
     }
+
+    private IEnumerator loading_level(string level)
+    {
+        Trans.SetTrigger("Start");
+        Debug.Log("Loading back to the overworld");
+        yield return new WaitForSeconds(1.5f);
+        SceneManager.LoadScene(level); //change to the new name
+        yield return null;
+    }
+
 
 }

@@ -23,7 +23,7 @@ public class Win : MonoBehaviour
     }
 
 // Update is called once per frame
-void Update()
+    void Update()
     {
         if (top_tf.position.y > 280) 
         {
