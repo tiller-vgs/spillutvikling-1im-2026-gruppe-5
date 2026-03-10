@@ -29,6 +29,15 @@ TextureImporter:
   - first:
       213: 2722558326948315094
     second: cat-export_tex_8
+  - first:
+      213: -3220616875015951975
+    second: cat-export_tex_9
+  - first:
+      213: -5057732394125836153
+    second: cat-export_tex_10
+  - first:
+      213: -5442684862807807948
+    second: cat-export_tex_11
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -141,9 +150,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 250
-        width: 182
-        height: 262
+        y: 245
+        width: 202
+        height: 267
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -162,10 +171,10 @@ TextureImporter:
       name: cat-export_tex_1
       rect:
         serializedVersion: 2
-        x: 182
-        y: 377
-        width: 132
-        height: 135
+        x: 202
+        y: 246
+        width: 202
+        height: 266
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -184,10 +193,10 @@ TextureImporter:
       name: cat-export_tex_2
       rect:
         serializedVersion: 2
-        x: 182
-        y: 293
-        width: 103
-        height: 84
+        x: 404
+        y: 250
+        width: 182
+        height: 262
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -206,10 +215,10 @@ TextureImporter:
       name: cat-export_tex_3
       rect:
         serializedVersion: 2
-        x: 285
-        y: 293
-        width: 103
-        height: 84
+        x: 404
+        y: 101
+        width: 158
+        height: 149
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -228,8 +237,8 @@ TextureImporter:
       name: cat-export_tex_4
       rect:
         serializedVersion: 2
-        x: 362
-        y: 377
+        x: 562
+        y: 115
         width: 132
         height: 135
       alignment: 0
@@ -250,10 +259,10 @@ TextureImporter:
       name: cat-export_tex_5
       rect:
         serializedVersion: 2
-        x: 0
-        y: 101
-        width: 158
-        height: 149
+        x: 694
+        y: 115
+        width: 132
+        height: 135
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -273,9 +282,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 13
-        width: 150
-        height: 88
+        y: 15
+        width: 102
+        height: 230
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -294,8 +303,8 @@ TextureImporter:
       name: cat-export_tex_7
       rect:
         serializedVersion: 2
-        x: 158
-        y: 20
+        x: 202
+        y: 16
         width: 102
         height: 230
       alignment: 0
@@ -316,10 +325,10 @@ TextureImporter:
       name: cat-export_tex_8
       rect:
         serializedVersion: 2
-        x: 260
-        y: 20
-        width: 102
-        height: 230
+        x: 304
+        y: 206
+        width: 57
+        height: 40
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -330,6 +339,72 @@ TextureImporter:
       bones: []
       spriteID: 6df3906af5878c520800000000000000
       internalID: 2722558326948315094
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cat-export_tex_9
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 17
+        width: 103
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 999ab0704021e43d0800000000000000
+      internalID: -3220616875015951975
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cat-export_tex_10
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 17
+        width: 103
+        height: 84
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 780c42f3f235fc9b0800000000000000
+      internalID: -5057732394125836153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: cat-export_tex_11
+      rect:
+        serializedVersion: 2
+        x: 562
+        y: 27
+        width: 150
+        height: 88
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 438e1ff24f2b774b0800000000000000
+      internalID: -5442684862807807948
       vertices: []
       indices: 
       edges: []
@@ -350,6 +425,8 @@ TextureImporter:
     nameFileIdTable:
       cat-export_tex_0: -7334650816572986012
       cat-export_tex_1: 1266965797883355166
+      cat-export_tex_10: -5057732394125836153
+      cat-export_tex_11: -5442684862807807948
       cat-export_tex_2: 5617149501111944110
       cat-export_tex_3: 3513406294435357476
       cat-export_tex_4: 6422853593301016630
@@ -357,6 +434,7 @@ TextureImporter:
       cat-export_tex_6: 2379467200088312718
       cat-export_tex_7: -8751987209771631429
       cat-export_tex_8: 2722558326948315094
+      cat-export_tex_9: -3220616875015951975
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

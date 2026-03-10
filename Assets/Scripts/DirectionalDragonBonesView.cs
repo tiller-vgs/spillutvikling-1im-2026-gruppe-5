@@ -2,11 +2,20 @@ using DragonBones;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using DBAnimationState = DragonBones.AnimationState;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Rigidbody2D))]
 public class DirectionalDragonBonesView : MonoBehaviour
 {
+    private const string DefaultSideShootingAnimationName = "shootingAnimation";
+    private const string SideWalkingBlendGroup = "SideWalkingBlend";
+    private const string SideShootingBlendGroup = "SideShootingBlend";
+    private const int SideWalkingBlendLayer = 0;
+    private const int SideShootingBlendLayer = 1;
+    private const string RightLegBoneName = "rightLeg";
+    private const string LeftLegBoneName = "leftLeg";
+
     [Header("Side View")]
     [FormerlySerializedAs("skeletonData")]
     public TextAsset sideSkeletonData;
@@ -20,6 +29,7 @@ public class DirectionalDragonBonesView : MonoBehaviour
     public string sideArmatureName = string.Empty;
     [FormerlySerializedAs("walkingAnimationName")]
     public string sideWalkingAnimationName = string.Empty;
+    public string sideShootingAnimationName = string.Empty;
 
     [Header("Front View")]
     public TextAsset frontSkeletonData;
@@ -73,6 +83,10 @@ public class DirectionalDragonBonesView : MonoBehaviour
     private ViewMode _lastViewMode = ViewMode.Side;
     private bool _isRestPoseApplied;
     private bool _isInitialized;
+    private bool _isShooting;
+    private bool _isSideAnimationListenerRegistered;
+    private DBAnimationState _sideWalkingBlendState;
+    private DBAnimationState _sideShootingBlendState;
 
     private void Awake()
     {
@@ -95,7 +109,14 @@ public class DirectionalDragonBonesView : MonoBehaviour
         }
 
         SetActiveView(ResolveDesiredViewMode());
-        UpdateFacing();
+        if (_isShooting)
+        {
+            SetSideFacing(1f);
+        }
+        else
+        {
+            UpdateFacing();
+        }
         UpdateAnimationState();
     }
 
@@ -115,7 +136,56 @@ public class DirectionalDragonBonesView : MonoBehaviour
         }
 
         SetActiveView(ResolveDesiredViewMode());
+        if (_isShooting)
+        {
+            SetSideFacing(1f);
+        }
         UpdateAnimationState();
+    }
+
+    public bool PlayShootingAnimation()
+    {
+        if (!_isInitialized)
+        {
+            RefreshView();
+        }
+
+        string shootingAnimationName = GetSideShootingAnimationName();
+        if (_sideArmatureComponent == null ||
+            string.IsNullOrWhiteSpace(shootingAnimationName) ||
+            _sideArmatureComponent.animation == null ||
+            !_sideArmatureComponent.animation.HasAnimation(shootingAnimationName))
+        {
+            return false;
+        }
+
+        SetActiveView(ViewMode.Side);
+        _lastViewMode = ViewMode.Side;
+        SetSideFacing(1f);
+
+        if (!_isShooting)
+        {
+            ClearSideBlendStates();
+            ResetSideAnimationState();
+        }
+
+        _isShooting = true;
+        _sideShootingBlendState = PlaySideShootingBlendState(shootingAnimationName);
+        if (_sideShootingBlendState == null)
+        {
+            _isShooting = false;
+            return false;
+        }
+
+        if (_sideWalkingBlendState == null || _sideWalkingBlendState.isFadeOut)
+        {
+            _sideWalkingBlendState = PlaySideWalkingBlendState();
+        }
+
+        UpdateSideWalkingBlendState();
+        _activeAnimation = shootingAnimationName;
+        _isRestPoseApplied = false;
+        return true;
     }
 
     private void CacheComponents()
@@ -146,6 +216,12 @@ public class DirectionalDragonBonesView : MonoBehaviour
                 "SideArmature"
             );
             _sideBaseVisualScale = sideVisualScale;
+        }
+
+        if (_sideArmatureComponent != null && !_isSideAnimationListenerRegistered)
+        {
+            _sideArmatureComponent.AddDBEventListener(EventObject.COMPLETE, HandleAnimationComplete);
+            _isSideAnimationListenerRegistered = true;
         }
 
         if (_frontArmatureComponent == null && HasFrontViewAssets())
@@ -308,6 +384,11 @@ public class DirectionalDragonBonesView : MonoBehaviour
 
     private ViewMode ResolveDesiredViewMode()
     {
+        if (_isShooting && _sideArmatureComponent != null)
+        {
+            return ViewMode.Side;
+        }
+
         if (_rb == null)
         {
             if (_sideArmatureComponent != null)
@@ -498,14 +579,17 @@ public class DirectionalDragonBonesView : MonoBehaviour
             return;
         }
 
-        Vector3 flippedScale = _sideBaseVisualScale;
-        float baseHorizontalSign = _sideBaseVisualScale.x == 0f ? 1f : Mathf.Sign(_sideBaseVisualScale.x);
-        flippedScale.x = Mathf.Abs(_sideBaseVisualScale.x) * Mathf.Sign(_rb.linearVelocity.x) * baseHorizontalSign;
-        _sideArmatureComponent.transform.localScale = flippedScale;
+        SetSideFacing(_rb.linearVelocity.x);
     }
 
     private void UpdateAnimationState()
     {
+        if (_isShooting)
+        {
+            UpdateSideWalkingBlendState();
+            return;
+        }
+
         if (_activeArmatureComponent == null || string.IsNullOrWhiteSpace(_activeWalkingAnimationName))
         {
             return;
@@ -571,6 +655,162 @@ public class DirectionalDragonBonesView : MonoBehaviour
 
         armatureComponent.armature.InvalidUpdate(null, true);
         armatureComponent.armature.AdvanceTime(0.0f);
+    }
+
+    private void OnDestroy()
+    {
+        if (_sideArmatureComponent != null && _isSideAnimationListenerRegistered)
+        {
+            _sideArmatureComponent.RemoveDBEventListener(EventObject.COMPLETE, HandleAnimationComplete);
+            _isSideAnimationListenerRegistered = false;
+        }
+    }
+
+    private void HandleAnimationComplete(string type, EventObject eventObject)
+    {
+        if (!_isShooting ||
+            eventObject == null ||
+            eventObject.animationState == null ||
+            eventObject.animationState != _sideShootingBlendState)
+        {
+            return;
+        }
+
+        _isShooting = false;
+        ClearSideBlendStates();
+        ResetSideAnimationState();
+        _activeAnimation = string.Empty;
+        _isRestPoseApplied = false;
+        SetActiveView(ResolveDesiredViewMode());
+        UpdateFacing();
+        UpdateAnimationState();
+    }
+
+    private string GetSideShootingAnimationName()
+    {
+        return string.IsNullOrWhiteSpace(sideShootingAnimationName)
+            ? DefaultSideShootingAnimationName
+            : sideShootingAnimationName;
+    }
+
+    private void SetSideFacing(float horizontalDirection)
+    {
+        if (_sideArmatureComponent == null)
+        {
+            return;
+        }
+
+        Vector3 flippedScale = _sideBaseVisualScale;
+        float baseHorizontalSign = _sideBaseVisualScale.x == 0f ? 1f : Mathf.Sign(_sideBaseVisualScale.x);
+        flippedScale.x = Mathf.Abs(_sideBaseVisualScale.x) * Mathf.Sign(horizontalDirection == 0f ? 1f : horizontalDirection) * baseHorizontalSign;
+        _sideArmatureComponent.transform.localScale = flippedScale;
+    }
+
+    private DBAnimationState PlaySideShootingBlendState(string animationName)
+    {
+        if (_sideArmatureComponent == null ||
+            _sideArmatureComponent.animation == null ||
+            _sideArmatureComponent.armature == null ||
+            string.IsNullOrWhiteSpace(animationName) ||
+            !_sideArmatureComponent.animation.HasAnimation(animationName))
+        {
+            return null;
+        }
+
+        var animation = _sideArmatureComponent.animation;
+        AnimationConfig animationConfig = animation.animationConfig;
+        animationConfig.animation = animationName;
+        animationConfig.playTimes = 1;
+        animationConfig.fadeInTime = 0f;
+        animationConfig.fadeOutTime = 0f;
+        animationConfig.fadeOutMode = AnimationFadeOutMode.SameLayerAndGroup;
+        animationConfig.layer = SideShootingBlendLayer;
+        animationConfig.group = SideShootingBlendGroup;
+        animationConfig.resetToPose = false;
+        animationConfig.displayControl = true;
+        animationConfig.RemoveBoneMask(_sideArmatureComponent.armature, RightLegBoneName, true);
+        animationConfig.RemoveBoneMask(_sideArmatureComponent.armature, LeftLegBoneName, true);
+        return animation.PlayConfig(animationConfig);
+    }
+
+    private DBAnimationState PlaySideWalkingBlendState()
+    {
+        if (_sideArmatureComponent == null ||
+            _sideArmatureComponent.animation == null ||
+            _sideArmatureComponent.armature == null ||
+            string.IsNullOrWhiteSpace(sideWalkingAnimationName) ||
+            !_sideArmatureComponent.animation.HasAnimation(sideWalkingAnimationName))
+        {
+            return null;
+        }
+
+        var animation = _sideArmatureComponent.animation;
+        AnimationConfig animationConfig = animation.animationConfig;
+        animationConfig.animation = sideWalkingAnimationName;
+        animationConfig.playTimes = 0;
+        animationConfig.fadeInTime = 0f;
+        animationConfig.fadeOutTime = 0f;
+        animationConfig.fadeOutMode = AnimationFadeOutMode.SameLayerAndGroup;
+        animationConfig.layer = SideWalkingBlendLayer;
+        animationConfig.group = SideWalkingBlendGroup;
+        animationConfig.resetToPose = false;
+        animationConfig.displayControl = false;
+        animationConfig.AddBoneMask(_sideArmatureComponent.armature, RightLegBoneName, true);
+        animationConfig.AddBoneMask(_sideArmatureComponent.armature, LeftLegBoneName, true);
+        return animation.PlayConfig(animationConfig);
+    }
+
+    private void UpdateSideWalkingBlendState()
+    {
+        if (!_isShooting)
+        {
+            return;
+        }
+
+        if (_sideWalkingBlendState == null || _sideWalkingBlendState.isCompleted || _sideWalkingBlendState.isFadeOut)
+        {
+            _sideWalkingBlendState = PlaySideWalkingBlendState();
+        }
+
+        if (_sideWalkingBlendState == null)
+        {
+            return;
+        }
+
+        bool isMoving = _rb != null && _rb.linearVelocity.sqrMagnitude > moveThreshold * moveThreshold;
+        if (isMoving)
+        {
+            _sideWalkingBlendState.Play();
+            return;
+        }
+
+        _sideWalkingBlendState.Stop();
+        _sideWalkingBlendState.currentTime = 0f;
+    }
+
+    private void ClearSideBlendStates()
+    {
+        if (_sideWalkingBlendState != null)
+        {
+            _sideWalkingBlendState.FadeOut(0f, true);
+            _sideWalkingBlendState = null;
+        }
+
+        if (_sideShootingBlendState != null)
+        {
+            _sideShootingBlendState.FadeOut(0f, true);
+            _sideShootingBlendState = null;
+        }
+    }
+
+    private void ResetSideAnimationState()
+    {
+        if (_sideArmatureComponent == null || _sideArmatureComponent.animation == null)
+        {
+            return;
+        }
+
+        _sideArmatureComponent.animation.Reset();
     }
 
     private static void SanitizeDuplicateArmatures(Dictionary<string, object> rawSkeletonData)
