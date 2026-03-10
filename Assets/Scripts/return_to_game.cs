@@ -25,7 +25,7 @@ public class return_to_game : MonoBehaviour
     private IEnumerator loading_level(string level)
     {
         Trans.SetTrigger("Start");
-        Debug.Log("Loading back to the overworld");
+        Debug.Log($"Loading back to {level}");
         yield return new WaitForSeconds(2);
         SceneManager.LoadScene(level); //change to the new name
         yield return null;

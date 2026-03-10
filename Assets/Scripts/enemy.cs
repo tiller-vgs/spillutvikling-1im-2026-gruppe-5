@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
@@ -13,6 +14,8 @@ public class attacker : MonoBehaviour
     public int DoAttack = 6;
 
     public int DoNothing = 1;
+
+    private Animator anim;
 
     private Transform tf;
 
@@ -48,7 +51,7 @@ public class attacker : MonoBehaviour
         {
             would_heal = MaxHeal;
         }
-        int BoringMathStuff = (would_heal + DoAttack + DoNothing);
+        int BoringMathStuff = (would_heal + DoAttack + DoNothing); 
         int choice = Random.Range(1, BoringMathStuff);
         //Debug.Log($"Total chance is {BoringMathStuff}");
         
@@ -56,11 +59,15 @@ public class attacker : MonoBehaviour
         if (choice >= 0 && choice <= 5) 
         {
             Debug.Log($"Enemy {index} has chosen to attack, with a {choice}"); //said it would come in handy //(Did it realy though?)
-            RingLeader.GetComponent<battle_handler>().get_attacked(damage);
+            StartCoroutine(attack());
+            
+            
         }
         else if (choice > (5) && choice <= (5+would_heal))
         {
-            Debug.Log($"Enemy {index} has chosen to heal, with a {choice}"); 
+            Debug.Log($"Enemy {index} has chosen to heal, with a {choice}");
+            int heal = Random.Range(0, 2);
+            RingLeader.GetComponent<battle_handler>().heal_enemy(index, heal);
         }
         else
         {
@@ -68,9 +75,23 @@ public class attacker : MonoBehaviour
         }
     }
 
+    private IEnumerator attack()
+    {
+        RingLeader.GetComponent<battle_handler>().attack_player(damage);
+        yield return new WaitForSeconds(0.3f);
+        anim.SetTrigger("Attack");
+        yield return null;
+    }
+
+    public void get_hit()
+    {
+        anim.SetTrigger("Damage");
+    }
+
     private void OnEnable()
     {
         tf = GetComponent<Transform>();
+        anim = GetComponent<Animator>();
         RingLeader = GameObject.Find("Battle_handler");
     }
 }
