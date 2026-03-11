@@ -19,6 +19,8 @@ public class Health_handler : MonoBehaviour
 
     public AudioSource death;
 
+    private Animator anim;
+
     private int chosen_hit_sfx;
 
     public float health = 10;
@@ -27,7 +29,7 @@ public class Health_handler : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        
     }
 
     // Update is called once per frame
@@ -41,22 +43,40 @@ public class Health_handler : MonoBehaviour
         tf = GetComponent<Transform>();
         par = GetComponent<ParticleSystem>();
         chosen_hit_sfx = Random.Range(1, 3);
+        anim = GetComponent<Animator>();
         //chosen_hit_sfx = 1; //debug
     }
 
     public void take_damage(int damage)
     {
         health = health - damage;
-        health_counter.GetComponent<set_health>().setHealth(health, max_health);
-        if (health > 0)
+        if (gameObject.name != "Player")
         {
-            StartCoroutine(play_hit());
+            if (health > 0)
+            {
+                StartCoroutine(play_hit());
+            }
+            else
+            {
+                StartCoroutine(play_death());
+            }
         }
-        else
+        else if(gameObject.name == "Player")
         {
-            StartCoroutine(play_death());
+            StartCoroutine(Player_damage());
         }
+
     }
+
+    private IEnumerator Player_damage()
+    {
+        anim.SetTrigger("Damage");
+        yield return new WaitForSeconds(0.4f);
+        health_counter.GetComponent<set_health>().setHealth(health, max_health);
+        par.Play();
+        yield return null;
+    }
+
     private IEnumerator play_hit()
     {
         float pitch = Random.Range(90, 120);
@@ -76,7 +96,9 @@ public class Health_handler : MonoBehaviour
             hit_3.pitch = pitch;
             hit_3.Play();
         }
-        yield return new WaitForSeconds(0.2f);
+        gameObject.GetComponent<attacker>().get_hit();
+        yield return new WaitForSeconds(0.4f);
+        health_counter.GetComponent<set_health>().setHealth(health, max_health);
         par.Play();
         yield return null;
     }
@@ -88,5 +110,14 @@ public class Health_handler : MonoBehaviour
         death.Play();
         yield return new WaitForSeconds(0.2f);
         par.Play();
+    }
+    public void heal(int heal)
+    {
+        health += heal;
+        if (health > max_health)
+        {
+            health = max_health;
+        }
+        health_counter.GetComponent<set_health>().setHealth(health, max_health);
     }
 }

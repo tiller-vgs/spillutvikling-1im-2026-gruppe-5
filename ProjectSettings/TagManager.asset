@@ -2,8 +2,10 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
-  tags: []
+  serializedVersion: 3
+  tags:
+  - Loading screen
+  - Ui
   layers:
   - Default
   - TransparentFX
@@ -11,7 +13,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - UI2
   - 
   - 
   - 
@@ -38,6 +40,16 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Loading screen
+    uniqueID: 622802467
+    locked: 0
+  - name: Ui
+    uniqueID: 2564794841
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
+  m_RenderingLayers:
+  - Default
+  - Loading screen
+  - Ui

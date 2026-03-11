@@ -39,7 +39,7 @@ public class enemy_handler : MonoBehaviour
         if (alive_children.Count > 0)
         {
             StartCoroutine(Fightchildren());
-            battler.GetComponent<battle_handler>().show_options();
+            
         }
         else if (alive_children.Count == 0)
         {
@@ -62,8 +62,10 @@ public class enemy_handler : MonoBehaviour
         for (int i = 0; i < child_count; i++)
         {
             child = tf.GetChild(i);
-            //child.GetComponent<enemy>().attack_as(i);
+            child.GetComponent<attacker>().attack_as(i);
         }
+        yield return new WaitForSeconds(1);
+        battler.GetComponent<battle_handler>().show_options();
         yield return null;
     }
 

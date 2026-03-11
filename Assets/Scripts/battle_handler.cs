@@ -16,7 +16,7 @@ public class battle_handler : MonoBehaviour
 
     private Transform options;
 
-    private int target;
+    private int target = 0;
 
     private int actions = 1;
 
@@ -89,19 +89,42 @@ public class battle_handler : MonoBehaviour
             Invoke("hide_options", 0.3f);
             yield return new WaitForSeconds(1);
             enemy = enemies.GetComponent<Transform>().Find($"enemy_{target}").gameObject;
+            player.GetComponent<Animator>().SetTrigger("Attack");
+            yield return new WaitForSeconds(0.3f);
             enemy.GetComponent<Health_handler>().take_damage(damage); //this should take in and work with the wepon system, but it is not made yet, if ever gets made
             Invoke("enemy_turn", 2f);
         }
     }
+
+    public void heal_enemy(int target, int heal)
+    {
+        StartCoroutine(healing_enemy(target, heal));
+    }
     
+    private IEnumerator healing_enemy(int target, int heal)
+    {
+        yield return new WaitForSeconds(0.5f);
+        enemy = enemies.GetComponent<Transform>().Find($"enemy_{target}").gameObject;
+        enemy.GetComponent<Health_handler>().heal(heal);
+
+        yield return null;
+    }
+
     private void enemy_turn()
     {
         enemies.GetComponent<enemy_handler>().your_turn();
     }
-
-    public void get_attacked(int damage = 1)
+    
+    public void attack_player(int damage)
     {
+        StartCoroutine(get_attacked(damage));
+    }
+
+    private IEnumerator get_attacked(int damage = 1)
+    {
+        yield return new WaitForSeconds(0.3f);
         player.GetComponent<Health_handler>().take_damage(damage);
+        yield return null;
     }
     public void win()
     {
