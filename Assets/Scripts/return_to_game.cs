@@ -31,5 +31,9 @@ public class return_to_game : MonoBehaviour
         yield return null;
     }
 
-
+    public void Quit()
+    {
+        Debug.Log("Thank you so much for-to playing my game!!");
+        Application.Quit();
+    }
 }
