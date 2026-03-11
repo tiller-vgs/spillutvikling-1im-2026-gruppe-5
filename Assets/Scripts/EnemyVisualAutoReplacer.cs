@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -17,6 +18,7 @@ public class EnemyVisualAutoReplacer : MonoBehaviour
     private const string SkeletonAssetPath = "Assets/Characters/Enemy1/enemy1_ske.json";
     private const string TextureAtlasAssetPath = "Assets/Characters/Enemy1/enemy1_tex.json";
     private const string TextureAssetPath = "Assets/Characters/Enemy1/enemy1_tex.png";
+    private const string ShootingAnimationName = "shootAnimation";
     private const float EnemyColliderWidthScale = 0.7f;
     private const float EnemyColliderHeightScale = 0.95f;
     private const float EnemyColliderMinWidth = 0.65f;
@@ -68,6 +70,8 @@ public class EnemyVisualAutoReplacer : MonoBehaviour
 
     private void Update()
     {
+        HandleTestShootInput();
+
         if (Time.unscaledTime < _nextScanTime)
         {
             return;
@@ -163,6 +167,7 @@ public class EnemyVisualAutoReplacer : MonoBehaviour
         view.sideDragonBonesDataName = dragonBonesDataName;
         view.sideArmatureName = armatureName;
         view.sideWalkingAnimationName = walkingAnimationName;
+        view.sideShootingAnimationName = ShootingAnimationName;
         view.sideVisualOffset = visualOffset;
         view.sideVisualScale = visualScale;
         view.frontSkeletonData = null;
@@ -184,6 +189,42 @@ public class EnemyVisualAutoReplacer : MonoBehaviour
         view.RefreshView();
 
         _configuredEnemyIds.Add(enemyId);
+    }
+
+    private void HandleTestShootInput()
+    {
+        if (Mouse.current == null || !Mouse.current.rightButton.wasPressedThisFrame)
+        {
+            return;
+        }
+
+        Camera mainCamera = Camera.main;
+        if (mainCamera == null)
+        {
+            return;
+        }
+
+        Vector2 pointerPosition = Mouse.current.position.ReadValue();
+        Vector3 worldPosition3 = mainCamera.ScreenToWorldPoint(pointerPosition);
+        Vector2 worldPosition = new Vector2(worldPosition3.x, worldPosition3.y);
+        Collider2D[] hits = Physics2D.OverlapPointAll(worldPosition);
+        for (int i = 0; i < hits.Length; i++)
+        {
+            Collider2D hit = hits[i];
+            if (hit == null)
+            {
+                continue;
+            }
+
+            DirectionalDragonBonesView view = hit.GetComponentInParent<DirectionalDragonBonesView>();
+            if (view == null || !EnemyNameRegex.IsMatch(view.gameObject.name))
+            {
+                continue;
+            }
+
+            view.PlayTestShootingAnimation();
+            return;
+        }
     }
 
     private static void ConfigureEnemyCollider(GameObject enemyObject)

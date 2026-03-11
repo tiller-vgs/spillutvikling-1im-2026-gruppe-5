@@ -78,6 +78,11 @@ public class attacker : MonoBehaviour
     private IEnumerator attack()
     {
         RingLeader.GetComponent<battle_handler>().attack_player(damage);
+        var dragonBonesView = GetComponent<DirectionalDragonBonesView>();
+        if (dragonBonesView != null)
+        {
+            dragonBonesView.PlayTestShootingAnimation();
+        }
         yield return new WaitForSeconds(0.3f);
         anim.SetTrigger("Attack");
         yield return null;

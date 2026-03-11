@@ -1,9 +1,6 @@
-using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Unity.VisualScripting.Metadata;
-using static UnityEngine.GraphicsBuffer;
 
 public class enemy_handler : MonoBehaviour
 {
@@ -35,11 +32,10 @@ public class enemy_handler : MonoBehaviour
     public void your_turn()
     {
         GetChildren();
-        StartCoroutine(Get_alive());
+        GetAliveChildren();
         if (alive_children.Count > 0)
         {
             StartCoroutine(Fightchildren());
-            
         }
         else if (alive_children.Count == 0)
         {
@@ -58,31 +54,29 @@ public class enemy_handler : MonoBehaviour
 
     private IEnumerator Fightchildren()
     {
-        var child = tf.GetChild(0);
-        for (int i = 0; i < child_count; i++)
+        for (int i = 0; i < alive_children.Count; i++)
         {
-            child = tf.GetChild(i);
-            child.GetComponent<attacker>().attack_as(i);
+            int childIndex = alive_children[i];
+            Transform child = tf.GetChild(childIndex);
+            child.GetComponent<attacker>().attack_as(childIndex);
         }
         yield return new WaitForSeconds(1);
         battler.GetComponent<battle_handler>().show_options();
         yield return null;
     }
 
-    public IEnumerator Get_alive()
+    private void GetAliveChildren()
     {
         alive_children.Clear();
-        var child = tf.GetChild(0);
         for (int i = 0; i < child_count; i++)
         {
-            child = tf.GetChild(i);
+            Transform child = tf.GetChild(i);
             float hp = child.GetComponent<attacker>().report_health();
             if (hp > 0)
-            { 
+            {
                 alive_children.Add(i);
             }
         }
-        yield return null;
     }
 }
 
