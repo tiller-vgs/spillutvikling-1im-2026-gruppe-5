@@ -16,8 +16,14 @@ public class DirectionalDragonBonesView : MonoBehaviour
     private const string RightLegBoneName = "rightLeg";
     private const string LeftLegBoneName = "leftLeg";
     private const string SideHandSlotName = "leftHand";
+    private const string FrontHandSlotName = "leftHand";
+    private const string BackHandSlotName = "rightHand";
     private const int UnarmedSideHandDisplayIndex = 0;
     private const int ArmedSideHandDisplayIndex = 1;
+    private const int UnarmedFrontHandDisplayIndex = 0;
+    private const int ArmedFrontHandDisplayIndex = 1;
+    private const int UnarmedBackHandDisplayIndex = 0;
+    private const int ArmedBackHandDisplayIndex = 1;
     private const string ManualSideHandDisplayController = "none";
 
     [Header("Side View")]
@@ -85,6 +91,7 @@ public class DirectionalDragonBonesView : MonoBehaviour
     private Vector3 _frontBaseVisualScale = Vector3.one;
     private Vector3 _backBaseVisualScale = Vector3.one;
     private ViewMode _lastViewMode = ViewMode.Side;
+    private float _sideFacingDirection = 1f;
     private bool _isRestPoseApplied;
     private bool _isInitialized;
     private bool _isShooting;
@@ -114,7 +121,6 @@ public class DirectionalDragonBonesView : MonoBehaviour
         }
 
         SetActiveView(ResolveDesiredViewMode());
-        UpdateSideHandDisplay();
         if (_isShooting)
         {
             SetSideFacing(1f);
@@ -123,12 +129,17 @@ public class DirectionalDragonBonesView : MonoBehaviour
         {
             UpdateFacing();
         }
+        RefreshArmatureTransforms();
         UpdateAnimationState();
+        UpdateHandDisplays();
     }
 
     public void RefreshView()
     {
         CacheComponents();
+        _sideBaseVisualScale = sideVisualScale;
+        _frontBaseVisualScale = frontVisualScale;
+        _backBaseVisualScale = backVisualScale;
         BuildArmaturesIfNeeded();
 
         _isInitialized =
@@ -142,12 +153,13 @@ public class DirectionalDragonBonesView : MonoBehaviour
         }
 
         SetActiveView(ResolveDesiredViewMode());
-        UpdateSideHandDisplay();
         if (_isShooting)
         {
             SetSideFacing(1f);
         }
+        RefreshArmatureTransforms();
         UpdateAnimationState();
+        UpdateHandDisplays();
     }
 
     public bool HasGun => _hasGun;
@@ -165,7 +177,30 @@ public class DirectionalDragonBonesView : MonoBehaviour
             RefreshView();
         }
 
-        UpdateSideHandDisplay();
+        UpdateHandDisplays();
+    }
+
+    public void UnequipGun()
+    {
+        if (!_hasGun)
+        {
+            return;
+        }
+
+        _hasGun = false;
+        if (_isShooting)
+        {
+            _isShooting = false;
+            ClearSideBlendStates();
+            ResetSideAnimationState();
+            _activeAnimation = string.Empty;
+            _isRestPoseApplied = false;
+            SetActiveView(ResolveDesiredViewMode());
+            UpdateFacing();
+            UpdateAnimationState();
+        }
+
+        UpdateHandDisplays();
     }
 
     public bool PlayShootingAnimation()
@@ -200,12 +235,12 @@ public class DirectionalDragonBonesView : MonoBehaviour
         }
 
         _isShooting = true;
-        UpdateSideHandDisplay();
+        UpdateHandDisplays();
         _sideShootingBlendState = PlaySideShootingBlendState(shootingAnimationName);
         if (_sideShootingBlendState == null)
         {
             _isShooting = false;
-            UpdateSideHandDisplay();
+            UpdateHandDisplays();
             return false;
         }
 
@@ -337,8 +372,7 @@ public class DirectionalDragonBonesView : MonoBehaviour
 
         armatureComponent.name = objectName;
         armatureComponent.transform.SetParent(transform, false);
-        armatureComponent.transform.localPosition = localOffset;
-        armatureComponent.transform.localScale = localScale;
+        SetArmatureTransform(armatureComponent.transform, localOffset, localScale);
         armatureComponent.gameObject.layer = gameObject.layer;
 
         ApplySortingFromSourceSprite(armatureComponent);
@@ -549,16 +583,7 @@ public class DirectionalDragonBonesView : MonoBehaviour
         SetArmatureVisible(_sideArmatureComponent, _activeArmatureComponent == _sideArmatureComponent);
         SetArmatureVisible(_frontArmatureComponent, _activeArmatureComponent == _frontArmatureComponent);
         SetArmatureVisible(_backArmatureComponent, _activeArmatureComponent == _backArmatureComponent);
-
-        if (_frontArmatureComponent != null)
-        {
-            _frontArmatureComponent.transform.localScale = _frontBaseVisualScale;
-        }
-
-        if (_backArmatureComponent != null)
-        {
-            _backArmatureComponent.transform.localScale = _backBaseVisualScale;
-        }
+        RefreshArmatureTransforms();
     }
 
     private void SetArmatureVisible(UnityArmatureComponent armatureComponent, bool isVisible)
@@ -612,6 +637,58 @@ public class DirectionalDragonBonesView : MonoBehaviour
         }
 
         SetSideFacing(_rb.linearVelocity.x);
+    }
+
+    private void RefreshArmatureTransforms()
+    {
+        if (_sideArmatureComponent != null)
+        {
+            SetArmatureTransform(_sideArmatureComponent.transform, sideVisualOffset, GetSideVisualScale());
+        }
+
+        if (_frontArmatureComponent != null)
+        {
+            SetArmatureTransform(_frontArmatureComponent.transform, frontVisualOffset, _frontBaseVisualScale);
+        }
+
+        if (_backArmatureComponent != null)
+        {
+            SetArmatureTransform(_backArmatureComponent.transform, backVisualOffset, _backBaseVisualScale);
+        }
+    }
+
+    private void SetArmatureTransform(UnityEngine.Transform armatureTransform, Vector3 desiredOffset, Vector3 desiredScale)
+    {
+        if (armatureTransform == null)
+        {
+            return;
+        }
+
+        Vector3 parentScale = transform.lossyScale;
+        armatureTransform.localPosition = new Vector3(
+            desiredOffset.x / GetSafeScaleComponent(parentScale.x),
+            desiredOffset.y / GetSafeScaleComponent(parentScale.y),
+            desiredOffset.z / GetSafeScaleComponent(parentScale.z)
+        );
+        armatureTransform.localScale = new Vector3(
+            desiredScale.x / GetSafeScaleComponent(parentScale.x),
+            desiredScale.y / GetSafeScaleComponent(parentScale.y),
+            desiredScale.z / GetSafeScaleComponent(parentScale.z)
+        );
+    }
+
+    private Vector3 GetSideVisualScale()
+    {
+        Vector3 visualScale = _sideBaseVisualScale;
+        float baseHorizontalSign = _sideBaseVisualScale.x == 0f ? 1f : Mathf.Sign(_sideBaseVisualScale.x);
+        float facingDirection = _sideFacingDirection == 0f ? 1f : Mathf.Sign(_sideFacingDirection);
+        visualScale.x = Mathf.Abs(_sideBaseVisualScale.x) * facingDirection * baseHorizontalSign;
+        return visualScale;
+    }
+
+    private static float GetSafeScaleComponent(float scaleComponent)
+    {
+        return Mathf.Abs(scaleComponent) <= 0.0001f ? 1f : scaleComponent;
     }
 
     private void UpdateAnimationState()
@@ -711,12 +788,12 @@ public class DirectionalDragonBonesView : MonoBehaviour
         _isShooting = false;
         ClearSideBlendStates();
         ResetSideAnimationState();
-        UpdateSideHandDisplay();
         _activeAnimation = string.Empty;
         _isRestPoseApplied = false;
         SetActiveView(ResolveDesiredViewMode());
         UpdateFacing();
         UpdateAnimationState();
+        UpdateHandDisplays();
     }
 
     private string GetSideShootingAnimationName()
@@ -724,6 +801,21 @@ public class DirectionalDragonBonesView : MonoBehaviour
         return string.IsNullOrWhiteSpace(sideShootingAnimationName)
             ? DefaultSideShootingAnimationName
             : sideShootingAnimationName;
+    }
+
+    private void UpdateHandDisplays()
+    {
+        UpdateSideHandDisplay();
+        UpdateArmatureHandDisplay(
+            _frontArmatureComponent,
+            FrontHandSlotName,
+            _hasGun ? ArmedFrontHandDisplayIndex : UnarmedFrontHandDisplayIndex
+        );
+        UpdateArmatureHandDisplay(
+            _backArmatureComponent,
+            BackHandSlotName,
+            _hasGun ? ArmedBackHandDisplayIndex : UnarmedBackHandDisplayIndex
+        );
     }
 
     private void UpdateSideHandDisplay()
@@ -755,6 +847,29 @@ public class DirectionalDragonBonesView : MonoBehaviour
         _sideArmatureComponent.armature.AdvanceTime(0f);
     }
 
+    private void UpdateArmatureHandDisplay(
+        UnityArmatureComponent armatureComponent,
+        string slotName,
+        int displayIndex)
+    {
+        if (armatureComponent == null || armatureComponent.armature == null)
+        {
+            return;
+        }
+
+        Slot handSlot = armatureComponent.armature.GetSlot(slotName);
+        if (handSlot == null || handSlot.displayList.Count <= displayIndex)
+        {
+            return;
+        }
+
+        handSlot.displayController = ManualSideHandDisplayController;
+        handSlot.displayIndex = displayIndex;
+        handSlot.InvalidUpdate();
+        armatureComponent.armature.InvalidUpdate(null, true);
+        armatureComponent.armature.AdvanceTime(0f);
+    }
+
     private void SetSideFacing(float horizontalDirection)
     {
         if (_sideArmatureComponent == null)
@@ -762,10 +877,12 @@ public class DirectionalDragonBonesView : MonoBehaviour
             return;
         }
 
-        Vector3 flippedScale = _sideBaseVisualScale;
-        float baseHorizontalSign = _sideBaseVisualScale.x == 0f ? 1f : Mathf.Sign(_sideBaseVisualScale.x);
-        flippedScale.x = Mathf.Abs(_sideBaseVisualScale.x) * Mathf.Sign(horizontalDirection == 0f ? 1f : horizontalDirection) * baseHorizontalSign;
-        _sideArmatureComponent.transform.localScale = flippedScale;
+        if (horizontalDirection != 0f)
+        {
+            _sideFacingDirection = Mathf.Sign(horizontalDirection);
+        }
+
+        SetArmatureTransform(_sideArmatureComponent.transform, sideVisualOffset, GetSideVisualScale());
     }
 
     private DBAnimationState PlaySideShootingBlendState(string animationName)

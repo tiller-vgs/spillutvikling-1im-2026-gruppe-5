@@ -57,15 +57,20 @@ public class PlayerDragonBonesView : MonoBehaviour
     private Vector3 _frontBaseVisualScale = Vector3.one;
     private Vector3 _backBaseVisualScale = Vector3.one;
     private ViewMode _lastViewMode = ViewMode.Side;
+    private float _sideFacingDirection = 1f;
     private bool _isRestPoseApplied;
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
         _sourceSpriteRenderer = GetComponent<SpriteRenderer>();
+        _sideBaseVisualScale = visualScale;
+        _frontBaseVisualScale = frontVisualScale;
+        _backBaseVisualScale = backVisualScale;
 
         BuildArmaturesIfNeeded();
         SetActiveView(ResolveDesiredViewMode());
+        RefreshArmatureTransforms();
         UpdateAnimationState();
     }
 
@@ -80,6 +85,7 @@ public class PlayerDragonBonesView : MonoBehaviour
 
         SetActiveView(ResolveDesiredViewMode());
         UpdateFacing();
+        RefreshArmatureTransforms();
         UpdateAnimationState();
     }
 
@@ -181,8 +187,7 @@ public class PlayerDragonBonesView : MonoBehaviour
 
         armatureComponent.name = objectName;
         armatureComponent.transform.SetParent(transform, false);
-        armatureComponent.transform.localPosition = localOffset;
-        armatureComponent.transform.localScale = localScale;
+        SetArmatureTransform(armatureComponent.transform, localOffset, localScale);
         armatureComponent.gameObject.layer = gameObject.layer;
 
         ApplySortingFromSourceSprite(armatureComponent);
@@ -389,16 +394,7 @@ public class PlayerDragonBonesView : MonoBehaviour
         SetArmatureVisible(_sideArmatureComponent, _activeArmatureComponent == _sideArmatureComponent);
         SetArmatureVisible(_frontArmatureComponent, _activeArmatureComponent == _frontArmatureComponent);
         SetArmatureVisible(_backArmatureComponent, _activeArmatureComponent == _backArmatureComponent);
-
-        if (_frontArmatureComponent != null)
-        {
-            _frontArmatureComponent.transform.localScale = _frontBaseVisualScale;
-        }
-
-        if (_backArmatureComponent != null)
-        {
-            _backArmatureComponent.transform.localScale = _backBaseVisualScale;
-        }
+        RefreshArmatureTransforms();
     }
 
     private void SetArmatureVisible(UnityArmatureComponent armatureComponent, bool isVisible)
@@ -435,10 +431,74 @@ public class PlayerDragonBonesView : MonoBehaviour
             return;
         }
 
-        Vector3 flippedScale = _sideBaseVisualScale;
+        SetSideFacing(_rb.linearVelocity.x);
+    }
+
+    private void RefreshArmatureTransforms()
+    {
+        if (_sideArmatureComponent != null)
+        {
+            SetArmatureTransform(_sideArmatureComponent.transform, visualOffset, GetSideVisualScale());
+        }
+
+        if (_frontArmatureComponent != null)
+        {
+            SetArmatureTransform(_frontArmatureComponent.transform, frontVisualOffset, _frontBaseVisualScale);
+        }
+
+        if (_backArmatureComponent != null)
+        {
+            SetArmatureTransform(_backArmatureComponent.transform, backVisualOffset, _backBaseVisualScale);
+        }
+    }
+
+    private void SetArmatureTransform(UnityEngine.Transform armatureTransform, Vector3 desiredOffset, Vector3 desiredScale)
+    {
+        if (armatureTransform == null)
+        {
+            return;
+        }
+
+        Vector3 parentScale = transform.lossyScale;
+        armatureTransform.localPosition = new Vector3(
+            desiredOffset.x / GetSafeScaleComponent(parentScale.x),
+            desiredOffset.y / GetSafeScaleComponent(parentScale.y),
+            desiredOffset.z / GetSafeScaleComponent(parentScale.z)
+        );
+        armatureTransform.localScale = new Vector3(
+            desiredScale.x / GetSafeScaleComponent(parentScale.x),
+            desiredScale.y / GetSafeScaleComponent(parentScale.y),
+            desiredScale.z / GetSafeScaleComponent(parentScale.z)
+        );
+    }
+
+    private Vector3 GetSideVisualScale()
+    {
+        Vector3 visualScaleValue = _sideBaseVisualScale;
         float baseHorizontalSign = _sideBaseVisualScale.x == 0f ? 1f : Mathf.Sign(_sideBaseVisualScale.x);
-        flippedScale.x = Mathf.Abs(_sideBaseVisualScale.x) * Mathf.Sign(_rb.linearVelocity.x) * baseHorizontalSign;
-        _sideArmatureComponent.transform.localScale = flippedScale;
+        float facingDirection = _sideFacingDirection == 0f ? 1f : Mathf.Sign(_sideFacingDirection);
+        visualScaleValue.x = Mathf.Abs(_sideBaseVisualScale.x) * facingDirection * baseHorizontalSign;
+        return visualScaleValue;
+    }
+
+    private void SetSideFacing(float horizontalDirection)
+    {
+        if (_sideArmatureComponent == null)
+        {
+            return;
+        }
+
+        if (horizontalDirection != 0f)
+        {
+            _sideFacingDirection = Mathf.Sign(horizontalDirection);
+        }
+
+        SetArmatureTransform(_sideArmatureComponent.transform, visualOffset, GetSideVisualScale());
+    }
+
+    private static float GetSafeScaleComponent(float scaleComponent)
+    {
+        return Mathf.Abs(scaleComponent) <= 0.0001f ? 1f : scaleComponent;
     }
 
     private void UpdateAnimationState()

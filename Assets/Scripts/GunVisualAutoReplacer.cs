@@ -10,6 +10,7 @@ public class GunVisualAutoReplacer : MonoBehaviour
 {
     private const string GunObjectName = "Gun";
     private const string GunClonePrefix = "Gun(";
+    private const string GunVisualObjectName = "GunVisual";
     private const string GunSpritePath = "Assets/Sprites/pistol.png";
 
     [SerializeField] private float scanIntervalSeconds = 0.5f;
@@ -18,14 +19,16 @@ public class GunVisualAutoReplacer : MonoBehaviour
 
     private readonly Dictionary<int, GunVisualState> _gunStates = new Dictionary<int, GunVisualState>();
 
+    private static GunVisualAutoReplacer _instance;
     private Sprite _gunSprite;
     private float _nextScanTime;
     private bool _missingSpriteWarningShown;
 
     private sealed class GunVisualState
     {
-        public Transform transform;
-        public Vector3 baseScale;
+        public Transform rootTransform;
+        public Transform visualTransform;
+        public Vector3 baseVisualScale = Vector3.one;
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -44,13 +47,30 @@ public class GunVisualAutoReplacer : MonoBehaviour
 
     private void Awake()
     {
+        _instance = this;
         SceneManager.sceneLoaded += OnSceneLoaded;
         ScanAllLoadedScenes();
     }
 
     private void OnDestroy()
     {
+        if (_instance == this)
+        {
+            _instance = null;
+        }
+
         SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    public static void ConfigureRuntimeGun(GameObject gunObject)
+    {
+        if (_instance == null || gunObject == null)
+        {
+            return;
+        }
+
+        _instance.TryEnsureGunSprite();
+        _instance.ConfigureGunIfNeeded(gunObject);
     }
 
     private void Update()
@@ -109,21 +129,34 @@ public class GunVisualAutoReplacer : MonoBehaviour
             return;
         }
 
+        Transform visualTransform = gunObject.transform.Find(GunVisualObjectName);
+        if (visualTransform == null)
+        {
+            var visualObject = new GameObject(GunVisualObjectName);
+            visualTransform = visualObject.transform;
+            visualTransform.SetParent(gunObject.transform, false);
+        }
+
         int gunId = gunObject.GetInstanceID();
         if (!_gunStates.TryGetValue(gunId, out GunVisualState gunState) || gunState == null)
         {
-            gunState = new GunVisualState
-            {
-                transform = gunObject.transform,
-                baseScale = gunObject.transform.localScale
-            };
+            gunState = new GunVisualState();
             _gunStates[gunId] = gunState;
         }
 
-        var spriteRenderer = gunObject.GetComponent<SpriteRenderer>();
+        gunState.rootTransform = gunObject.transform;
+        gunState.visualTransform = visualTransform;
+
+        var rootSpriteRenderer = gunObject.GetComponent<SpriteRenderer>();
+        if (rootSpriteRenderer != null)
+        {
+            rootSpriteRenderer.enabled = false;
+        }
+
+        var spriteRenderer = visualTransform.GetComponent<SpriteRenderer>();
         if (spriteRenderer == null)
         {
-            spriteRenderer = gunObject.AddComponent<SpriteRenderer>();
+            spriteRenderer = visualTransform.gameObject.AddComponent<SpriteRenderer>();
         }
 
         if (_gunSprite != null)
@@ -132,6 +165,14 @@ public class GunVisualAutoReplacer : MonoBehaviour
         }
 
         spriteRenderer.color = Color.white;
+        if (rootSpriteRenderer != null)
+        {
+            spriteRenderer.sortingLayerID = rootSpriteRenderer.sortingLayerID;
+            spriteRenderer.sortingOrder = rootSpriteRenderer.sortingOrder;
+        }
+
+        visualTransform.gameObject.layer = gunObject.layer;
+        UpdateGunVisualTransform(gunState, 1f);
     }
 
     private void UpdatePulse()
@@ -147,25 +188,21 @@ public class GunVisualAutoReplacer : MonoBehaviour
         foreach (KeyValuePair<int, GunVisualState> pair in _gunStates)
         {
             GunVisualState gunState = pair.Value;
-            if (gunState == null || gunState.transform == null)
+            if (gunState == null || gunState.rootTransform == null || gunState.visualTransform == null)
             {
                 missingGunIds ??= new List<int>();
                 missingGunIds.Add(pair.Key);
                 continue;
             }
 
-            Transform gunTransform = gunState.transform;
+            Transform gunTransform = gunState.rootTransform;
             if (!gunTransform.gameObject.activeInHierarchy)
             {
-                gunTransform.localScale = gunState.baseScale;
+                UpdateGunVisualTransform(gunState, 1f);
                 continue;
             }
 
-            gunTransform.localScale = new Vector3(
-                gunState.baseScale.x * pulse,
-                gunState.baseScale.y * pulse,
-                gunState.baseScale.z
-            );
+            UpdateGunVisualTransform(gunState, pulse);
         }
 
         if (missingGunIds == null)
@@ -177,6 +214,27 @@ public class GunVisualAutoReplacer : MonoBehaviour
         {
             _gunStates.Remove(missingGunIds[i]);
         }
+    }
+
+    private static void UpdateGunVisualTransform(GunVisualState gunState, float pulse)
+    {
+        if (gunState == null || gunState.rootTransform == null || gunState.visualTransform == null)
+        {
+            return;
+        }
+
+        Vector3 parentScale = gunState.rootTransform.lossyScale;
+        gunState.visualTransform.localPosition = Vector3.zero;
+        gunState.visualTransform.localScale = new Vector3(
+            gunState.baseVisualScale.x * pulse / GetSafeScaleComponent(parentScale.x),
+            gunState.baseVisualScale.y * pulse / GetSafeScaleComponent(parentScale.y),
+            gunState.baseVisualScale.z / GetSafeScaleComponent(parentScale.z)
+        );
+    }
+
+    private static float GetSafeScaleComponent(float scaleComponent)
+    {
+        return Mathf.Abs(scaleComponent) <= 0.0001f ? 1f : scaleComponent;
     }
 
     private bool TryEnsureGunSprite()
