@@ -15,6 +15,10 @@ public class DirectionalDragonBonesView : MonoBehaviour
     private const int SideShootingBlendLayer = 1;
     private const string RightLegBoneName = "rightLeg";
     private const string LeftLegBoneName = "leftLeg";
+    private const string SideHandSlotName = "leftHand";
+    private const int UnarmedSideHandDisplayIndex = 0;
+    private const int ArmedSideHandDisplayIndex = 1;
+    private const string ManualSideHandDisplayController = "none";
 
     [Header("Side View")]
     [FormerlySerializedAs("skeletonData")]
@@ -85,6 +89,7 @@ public class DirectionalDragonBonesView : MonoBehaviour
     private bool _isInitialized;
     private bool _isShooting;
     private bool _isSideAnimationListenerRegistered;
+    private bool _hasGun;
     private DBAnimationState _sideWalkingBlendState;
     private DBAnimationState _sideShootingBlendState;
 
@@ -109,6 +114,7 @@ public class DirectionalDragonBonesView : MonoBehaviour
         }
 
         SetActiveView(ResolveDesiredViewMode());
+        UpdateSideHandDisplay();
         if (_isShooting)
         {
             SetSideFacing(1f);
@@ -136,6 +142,7 @@ public class DirectionalDragonBonesView : MonoBehaviour
         }
 
         SetActiveView(ResolveDesiredViewMode());
+        UpdateSideHandDisplay();
         if (_isShooting)
         {
             SetSideFacing(1f);
@@ -143,11 +150,34 @@ public class DirectionalDragonBonesView : MonoBehaviour
         UpdateAnimationState();
     }
 
+    public bool HasGun => _hasGun;
+
+    public void EquipGun()
+    {
+        if (_hasGun)
+        {
+            return;
+        }
+
+        _hasGun = true;
+        if (!_isInitialized)
+        {
+            RefreshView();
+        }
+
+        UpdateSideHandDisplay();
+    }
+
     public bool PlayShootingAnimation()
     {
         if (!_isInitialized)
         {
             RefreshView();
+        }
+
+        if (!_hasGun)
+        {
+            return false;
         }
 
         string shootingAnimationName = GetSideShootingAnimationName();
@@ -170,10 +200,12 @@ public class DirectionalDragonBonesView : MonoBehaviour
         }
 
         _isShooting = true;
+        UpdateSideHandDisplay();
         _sideShootingBlendState = PlaySideShootingBlendState(shootingAnimationName);
         if (_sideShootingBlendState == null)
         {
             _isShooting = false;
+            UpdateSideHandDisplay();
             return false;
         }
 
@@ -679,6 +711,7 @@ public class DirectionalDragonBonesView : MonoBehaviour
         _isShooting = false;
         ClearSideBlendStates();
         ResetSideAnimationState();
+        UpdateSideHandDisplay();
         _activeAnimation = string.Empty;
         _isRestPoseApplied = false;
         SetActiveView(ResolveDesiredViewMode());
@@ -691,6 +724,35 @@ public class DirectionalDragonBonesView : MonoBehaviour
         return string.IsNullOrWhiteSpace(sideShootingAnimationName)
             ? DefaultSideShootingAnimationName
             : sideShootingAnimationName;
+    }
+
+    private void UpdateSideHandDisplay()
+    {
+        if (_sideArmatureComponent == null || _sideArmatureComponent.armature == null)
+        {
+            return;
+        }
+
+        Slot sideHandSlot = _sideArmatureComponent.armature.GetSlot(SideHandSlotName);
+        if (sideHandSlot == null)
+        {
+            return;
+        }
+
+        if (_isShooting)
+        {
+            sideHandSlot.displayController = SideShootingBlendGroup;
+            sideHandSlot.InvalidUpdate();
+            _sideArmatureComponent.armature.InvalidUpdate(null, true);
+            _sideArmatureComponent.armature.AdvanceTime(0f);
+            return;
+        }
+
+        sideHandSlot.displayController = ManualSideHandDisplayController;
+        sideHandSlot.displayIndex = _hasGun ? ArmedSideHandDisplayIndex : UnarmedSideHandDisplayIndex;
+        sideHandSlot.InvalidUpdate();
+        _sideArmatureComponent.armature.InvalidUpdate(null, true);
+        _sideArmatureComponent.armature.AdvanceTime(0f);
     }
 
     private void SetSideFacing(float horizontalDirection)
