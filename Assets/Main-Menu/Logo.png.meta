@@ -1,43 +1,43 @@
 fileFormatVersion: 2
-guid: c40e55c1b332163489fcd34dacc92492
+guid: f6bbe6bb2ab1efc47a7061e9ece7e7f0
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7334650816572986012
-    second: cat-export_tex_0
+      213: 1404028623067837608
+    second: Logo_0
   - first:
-      213: 1266965797883355166
-    second: cat-export_tex_1
+      213: 6795467416601567747
+    second: Logo_1
   - first:
-      213: 5617149501111944110
-    second: cat-export_tex_2
+      213: 6875538535012287733
+    second: Logo_2
   - first:
-      213: 3513406294435357476
-    second: cat-export_tex_3
+      213: 2381070441135384947
+    second: Logo_3
   - first:
-      213: 6422853593301016630
-    second: cat-export_tex_4
+      213: -3774021269495190454
+    second: Logo_4
   - first:
-      213: 6612354276756965139
-    second: cat-export_tex_5
+      213: 6893372319333685202
+    second: Logo_5
   - first:
-      213: 2379467200088312718
-    second: cat-export_tex_6
+      213: 5409054819110567409
+    second: Logo_6
   - first:
-      213: -8751987209771631429
-    second: cat-export_tex_7
+      213: -5151548511015374267
+    second: Logo_7
   - first:
-      213: 2722558326948315094
-    second: cat-export_tex_8
+      213: 8618792996653847996
+    second: Logo_8
   - first:
-      213: -3220616875015951975
-    second: cat-export_tex_9
+      213: -8503305437844106070
+    second: Logo_9
   - first:
-      213: -5057732394125836153
-    second: cat-export_tex_10
+      213: 9156548432191564253
+    second: Logo_10
   - first:
-      213: -5442684862807807948
-    second: cat-export_tex_11
+      213: -1306304639851798359
+    second: Logo_11
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -79,7 +79,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -129,30 +129,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: cat-export_tex_0
+      name: Logo_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 245
-        width: 202
-        height: 267
+        x: 94
+        y: 212
+        width: 121
+        height: 159
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -161,20 +148,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 46d63a661f5163a90800000000000000
-      internalID: -7334650816572986012
+      spriteID: 8a47074089c1c7310800000000000000
+      internalID: 1404028623067837608
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: cat-export_tex_1
+      name: Logo_1
       rect:
         serializedVersion: 2
-        x: 202
-        y: 246
-        width: 202
-        height: 266
+        x: 243
+        y: 213
+        width: 142
+        height: 156
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -183,20 +170,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e1028653eaa259110800000000000000
-      internalID: 1266965797883355166
+      spriteID: 30227498c995e4e50800000000000000
+      internalID: 6795467416601567747
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: cat-export_tex_2
+      name: Logo_2
       rect:
         serializedVersion: 2
-        x: 404
-        y: 250
-        width: 182
-        height: 262
+        x: 397
+        y: 213
+        width: 117
+        height: 156
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -205,20 +192,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ea34a08d5bf14fd40800000000000000
-      internalID: 5617149501111944110
+      spriteID: 5f4cae29ed1da6f50800000000000000
+      internalID: 6875538535012287733
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: cat-export_tex_3
+      name: Logo_3
       rect:
         serializedVersion: 2
-        x: 404
-        y: 101
-        width: 158
-        height: 149
+        x: 548
+        y: 213
+        width: 105
+        height: 156
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -227,20 +214,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 423e073f86022c030800000000000000
-      internalID: 3513406294435357476
+      spriteID: 379ae0563f24b0120800000000000000
+      internalID: 2381070441135384947
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: cat-export_tex_4
+      name: Logo_4
       rect:
         serializedVersion: 2
-        x: 562
-        y: 115
-        width: 132
-        height: 135
+        x: 690
+        y: 212
+        width: 118
+        height: 159
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -249,20 +236,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6306c09305f822950800000000000000
-      internalID: 6422853593301016630
+      spriteID: a4c68f8a6abff9bc0800000000000000
+      internalID: -3774021269495190454
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: cat-export_tex_5
+      name: Logo_5
       rect:
         serializedVersion: 2
-        x: 694
-        y: 115
-        width: 132
-        height: 135
+        x: 851
+        y: 212
+        width: 121
+        height: 159
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -271,20 +258,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 31742235e2dc3cb50800000000000000
-      internalID: 6612354276756965139
+      spriteID: 2d7156e0a9d2aaf50800000000000000
+      internalID: 6893372319333685202
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: cat-export_tex_6
+      name: Logo_6
       rect:
         serializedVersion: 2
-        x: 0
-        y: 15
-        width: 102
-        height: 230
+        x: 999
+        y: 213
+        width: 142
+        height: 156
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -293,20 +280,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e8b05ffbfc0950120800000000000000
-      internalID: 2379467200088312718
+      spriteID: 1fd33b713b2d01b40800000000000000
+      internalID: 5409054819110567409
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: cat-export_tex_7
+      name: Logo_7
       rect:
         serializedVersion: 2
-        x: 202
-        y: 16
-        width: 102
-        height: 230
+        x: 1172
+        y: 213
+        width: 92
+        height: 156
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -315,20 +302,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bbcbcc2b002ba8680800000000000000
-      internalID: -8751987209771631429
+      spriteID: 5427cbd5ce50288b0800000000000000
+      internalID: -5151548511015374267
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: cat-export_tex_8
+      name: Logo_8
       rect:
         serializedVersion: 2
-        x: 304
-        y: 206
-        width: 57
-        height: 40
+        x: 1263
+        y: 213
+        width: 130
+        height: 156
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -337,20 +324,64 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6df3906af5878c520800000000000000
-      internalID: 2722558326948315094
+      spriteID: cb55d2ee09a1c9770800000000000000
+      internalID: 8618792996653847996
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: cat-export_tex_9
+      name: Logo_9
       rect:
         serializedVersion: 2
-        x: 304
-        y: 17
+        x: 1420
+        y: 213
+        width: 105
+        height: 156
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa497a8b1c03ef980800000000000000
+      internalID: -8503305437844106070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Logo_10
+      rect:
+        serializedVersion: 2
+        x: 1560
+        y: 212
+        width: 122
+        height: 158
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd9207d1948921f70800000000000000
+      internalID: 9156548432191564253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Logo_11
+      rect:
+        serializedVersion: 2
+        x: 1723
+        y: 213
         width: 103
-        height: 84
+        height: 156
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -359,52 +390,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 999ab0704021e43d0800000000000000
-      internalID: -3220616875015951975
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: cat-export_tex_10
-      rect:
-        serializedVersion: 2
-        x: 407
-        y: 17
-        width: 103
-        height: 84
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 780c42f3f235fc9b0800000000000000
-      internalID: -5057732394125836153
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: cat-export_tex_11
-      rect:
-        serializedVersion: 2
-        x: 562
-        y: 27
-        width: 150
-        height: 88
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 438e1ff24f2b774b0800000000000000
-      internalID: -5442684862807807948
+      spriteID: 9a06035e9d21fdde0800000000000000
+      internalID: -1306304639851798359
       vertices: []
       indices: 
       edges: []
@@ -413,7 +400,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -423,18 +410,18 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      cat-export_tex_0: -7334650816572986012
-      cat-export_tex_1: 1266965797883355166
-      cat-export_tex_10: -5057732394125836153
-      cat-export_tex_11: -5442684862807807948
-      cat-export_tex_2: 5617149501111944110
-      cat-export_tex_3: 3513406294435357476
-      cat-export_tex_4: 6422853593301016630
-      cat-export_tex_5: 6612354276756965139
-      cat-export_tex_6: 2379467200088312718
-      cat-export_tex_7: -8751987209771631429
-      cat-export_tex_8: 2722558326948315094
-      cat-export_tex_9: -3220616875015951975
+      Logo_0: 1404028623067837608
+      Logo_1: 6795467416601567747
+      Logo_10: 9156548432191564253
+      Logo_11: -1306304639851798359
+      Logo_2: 6875538535012287733
+      Logo_3: 2381070441135384947
+      Logo_4: -3774021269495190454
+      Logo_5: 6893372319333685202
+      Logo_6: 5409054819110567409
+      Logo_7: -5151548511015374267
+      Logo_8: 8618792996653847996
+      Logo_9: -8503305437844106070
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

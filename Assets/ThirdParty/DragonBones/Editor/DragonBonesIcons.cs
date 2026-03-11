@@ -66,7 +66,9 @@ namespace DragonBones
 
         static void HierarchyIconsOnGUI(int instanceId, Rect selectionRect)
         {
+#pragma warning disable CS0618
             GameObject go = (GameObject)EditorUtility.InstanceIDToObject(instanceId);
+#pragma warning restore CS0618
             if (!go)
             {
                 return;
