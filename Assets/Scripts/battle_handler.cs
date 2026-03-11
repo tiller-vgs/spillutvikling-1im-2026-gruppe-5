@@ -8,7 +8,9 @@ public class battle_handler : MonoBehaviour
 
     public GameObject player;
 
-    public GameObject enemies; 
+    public GameObject enemies;
+
+    public Animator death;
 
     private GameObject enemy;
 
@@ -62,16 +64,31 @@ public class battle_handler : MonoBehaviour
 
     public void show_options()
     {
-        player_turn = true;
-        actions = 1;
+        float player_health = player.GetComponent<Health_handler>().health;
+        if (player_health >= 1)
+        {
+            player_turn = true;
+            actions = 1;
+        }
+        else if (player_health <= 0)
+        {
+            player_death();
+        }
+        
     }
 
-    private void hide_options()
+    private void player_death()
+    {
+        Debug.Log("death triggerd");
+        death.SetTrigger("Death");
+    }
+
+    private void hide_options() //might come in handy
     {
         player_turn = false;
     }
 
-    public void GetSelectedEnemy(int index)
+    public void GetSelectedEnemy(int index)//to be used later in case we get more enemies
     {
         target = index;
     }
