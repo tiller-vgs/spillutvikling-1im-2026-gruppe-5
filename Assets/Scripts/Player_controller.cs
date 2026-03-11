@@ -5,6 +5,8 @@ public class Player_controller : MonoBehaviour
 {
     private const float ShootCooldownSeconds = 0.6f;
     private const float GunPickupRadius = 1.5f;
+    private const float GunDropFootOffset = 0.12f;
+    private const string GunObjectName = "Gun";
 
     public float movespeed = 6.7f;
     public InputActionAsset inputsystem;
@@ -14,6 +16,7 @@ public class Player_controller : MonoBehaviour
     private InputAction _interactAction;
     private Vector2 _moveDirection;
     private Rigidbody2D _rb;
+    private Collider2D _pickupCollider;
     private DirectionalDragonBonesView _dragonBonesView;
     private float _nextShootTime;
 
@@ -38,6 +41,7 @@ public class Player_controller : MonoBehaviour
               inputsystem.FindAction("interact", false)
             : null;
         _rb = GetComponent<Rigidbody2D>();
+        _pickupCollider = GetComponent<Collider2D>();
         _dragonBonesView = GetComponent<DirectionalDragonBonesView>();
 
         if (_rb != null)
@@ -89,6 +93,11 @@ public class Player_controller : MonoBehaviour
     private void Update()
     {
         _moveDirection = _moveAction != null ? _moveAction.ReadValue<Vector2>() : Vector2.zero;
+
+        if (Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame)
+        {
+            TryDropGun();
+        }
     }
 
     private void FixedUpdate()
@@ -149,12 +158,39 @@ public class Player_controller : MonoBehaviour
         Destroy(gun.gameObject);
     }
 
+    private void TryDropGun()
+    {
+        if (_dragonBonesView == null || !_dragonBonesView.HasGun)
+        {
+            return;
+        }
+
+        var droppedGun = new GameObject(GunObjectName);
+        droppedGun.transform.position = GetGunDropPosition();
+        GunVisualAutoReplacer.ConfigureRuntimeGun(droppedGun);
+        _dragonBonesView.UnequipGun();
+    }
+
+    private Vector3 GetGunDropPosition()
+    {
+        Vector3 dropPosition = transform.position;
+        if (_pickupCollider == null)
+        {
+            dropPosition.y -= 0.35f;
+            return dropPosition;
+        }
+
+        Bounds bounds = _pickupCollider.bounds;
+        dropPosition.x = bounds.center.x;
+        dropPosition.y = bounds.min.y + GunDropFootOffset;
+        return dropPosition;
+    }
+
     private Transform FindNearestGun()
     {
         float maxSqrDistance = GunPickupRadius * GunPickupRadius;
         float nearestSqrDistance = maxSqrDistance;
         Transform nearestGun = null;
-        Vector3 playerPosition = transform.position;
         Transform[] sceneTransforms = Object.FindObjectsByType<Transform>(FindObjectsSortMode.None);
 
         foreach (Transform candidate in sceneTransforms)
@@ -167,7 +203,7 @@ public class Player_controller : MonoBehaviour
                 continue;
             }
 
-            float sqrDistance = (candidate.position - playerPosition).sqrMagnitude;
+            float sqrDistance = GetGunPickupSqrDistance(candidate);
             if (sqrDistance > nearestSqrDistance)
             {
                 continue;
@@ -180,9 +216,52 @@ public class Player_controller : MonoBehaviour
         return nearestGun;
     }
 
+    private float GetGunPickupSqrDistance(Transform gunTransform)
+    {
+        if (gunTransform == null)
+        {
+            return float.PositiveInfinity;
+        }
+
+        Vector2 playerPoint = _pickupCollider != null
+            ? _pickupCollider.ClosestPoint(gunTransform.position)
+            : (Vector2)transform.position;
+
+        Collider2D gunCollider = gunTransform.GetComponent<Collider2D>();
+        if (gunCollider != null)
+        {
+            Vector2 gunPoint = gunCollider.ClosestPoint(playerPoint);
+            if (_pickupCollider != null)
+            {
+                playerPoint = _pickupCollider.ClosestPoint(gunPoint);
+            }
+
+            return (gunPoint - playerPoint).sqrMagnitude;
+        }
+
+        Renderer gunRenderer = gunTransform.GetComponent<Renderer>();
+        if (gunRenderer == null)
+        {
+            gunRenderer = gunTransform.GetComponentInChildren<Renderer>();
+        }
+
+        if (gunRenderer != null)
+        {
+            Vector3 gunPoint = gunRenderer.bounds.ClosestPoint(playerPoint);
+            if (_pickupCollider != null)
+            {
+                playerPoint = _pickupCollider.ClosestPoint(gunPoint);
+            }
+
+            return ((Vector2)gunPoint - playerPoint).sqrMagnitude;
+        }
+
+        return ((Vector2)gunTransform.position - playerPoint).sqrMagnitude;
+    }
+
     private static bool IsGunObject(Transform candidate)
     {
         string objectName = candidate.name;
-        return objectName == "Gun" || objectName.StartsWith("Gun(");
+        return objectName == GunObjectName || objectName.StartsWith("Gun(");
     }
 }

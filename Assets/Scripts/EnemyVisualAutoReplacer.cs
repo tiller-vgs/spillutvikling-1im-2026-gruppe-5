@@ -17,6 +17,11 @@ public class EnemyVisualAutoReplacer : MonoBehaviour
     private const string SkeletonAssetPath = "Assets/Characters/Enemy1/enemy1_ske.json";
     private const string TextureAtlasAssetPath = "Assets/Characters/Enemy1/enemy1_tex.json";
     private const string TextureAssetPath = "Assets/Characters/Enemy1/enemy1_tex.png";
+    private const float EnemyColliderWidthScale = 0.7f;
+    private const float EnemyColliderHeightScale = 0.95f;
+    private const float EnemyColliderMinWidth = 0.65f;
+    private const float EnemyColliderMinHeight = 0.9f;
+    private const float EnemyColliderVerticalOffsetRatio = -0.05f;
 
     [SerializeField] private float scanIntervalSeconds = 0.5f;
     [SerializeField] private string dragonBonesDataName = "enemy1_ske";
@@ -132,10 +137,13 @@ public class EnemyVisualAutoReplacer : MonoBehaviour
             rigidbody = enemyObject.AddComponent<Rigidbody2D>();
         }
 
+        rigidbody.bodyType = RigidbodyType2D.Kinematic;
         rigidbody.gravityScale = 0f;
         rigidbody.linearVelocity = Vector2.zero;
         rigidbody.angularVelocity = 0f;
         rigidbody.constraints |= RigidbodyConstraints2D.FreezeRotation;
+
+        ConfigureEnemyCollider(enemyObject);
 
         var walker = enemyObject.GetComponent<EnemyWalker>();
         if (walker != null)
@@ -176,6 +184,35 @@ public class EnemyVisualAutoReplacer : MonoBehaviour
         view.RefreshView();
 
         _configuredEnemyIds.Add(enemyId);
+    }
+
+    private static void ConfigureEnemyCollider(GameObject enemyObject)
+    {
+        var collider = enemyObject.GetComponent<BoxCollider2D>();
+        if (collider == null)
+        {
+            collider = enemyObject.AddComponent<BoxCollider2D>();
+        }
+
+        collider.isTrigger = false;
+
+        var spriteRenderer = enemyObject.GetComponent<SpriteRenderer>();
+        if (spriteRenderer == null || spriteRenderer.sprite == null)
+        {
+            collider.offset = Vector2.zero;
+            collider.size = new Vector2(EnemyColliderMinWidth, EnemyColliderMinHeight);
+            return;
+        }
+
+        Bounds spriteBounds = spriteRenderer.sprite.bounds;
+        float colliderWidth = Mathf.Max(EnemyColliderMinWidth, spriteBounds.size.x * EnemyColliderWidthScale);
+        float colliderHeight = Mathf.Max(EnemyColliderMinHeight, spriteBounds.size.y * EnemyColliderHeightScale);
+
+        collider.offset = new Vector2(
+            spriteBounds.center.x,
+            spriteBounds.center.y + spriteBounds.size.y * EnemyColliderVerticalOffsetRatio
+        );
+        collider.size = new Vector2(colliderWidth, colliderHeight);
     }
 
     private bool TryEnsureEnemyAssets()
