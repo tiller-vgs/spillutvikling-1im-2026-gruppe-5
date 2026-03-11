@@ -9141,7 +9141,7 @@ MonoBehaviour:
   hit_2: {fileID: 0}
   hit_3: {fileID: 0}
   death: {fileID: 0}
-  health: 0
+  health: 10
   max_health: 10
 --- !u!199 &1937161035
 ParticleSystemRenderer:
