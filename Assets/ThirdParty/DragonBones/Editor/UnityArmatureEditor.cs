@@ -515,8 +515,12 @@ namespace DragonBones
 
         private bool _IsPrefab()
         {
+#if UNITY_2018_3_OR_NEWER
+            return PrefabUtility.IsPartOfPrefabAsset(_armatureComponent.gameObject);
+#else
             return PrefabUtility.GetPrefabParent(_armatureComponent.gameObject) == null
                 && PrefabUtility.GetPrefabObject(_armatureComponent.gameObject) != null;
+#endif
         }
 
         private List<string> _GetSortingLayerNames()
