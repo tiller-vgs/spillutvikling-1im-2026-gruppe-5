@@ -231,11 +231,7 @@ public class battle_handler : MonoBehaviour
             ? "OverworldScene"
             : BattleSessionState.ReturnSceneName;
         return_to_game loader = FindFirstObjectByType<return_to_game>(); //Why is this here, it worked before -Viktor
-        if (loader != null)
-        {
-            loader.load_level(targetScene);
-            yield break;
-        }
+        
 
         SceneManager.LoadScene(targetScene);
     }
