@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class battle_handler : MonoBehaviour
 {
     private const float OptionsStaticY = 0f;
-    private const float EndScreenDuration = 3f;
+    private const float EndScreenDuration = 3f;  //not my doing -Viktor
 
     public GameObject winner;
 
@@ -29,7 +29,7 @@ public class battle_handler : MonoBehaviour
 
     public bool player_turn = true;
 
-    private bool _isEnding;
+    private bool _isEnding; //This was not my doing -Viktor
 
     
 
@@ -230,7 +230,7 @@ public class battle_handler : MonoBehaviour
         string targetScene = string.IsNullOrEmpty(BattleSessionState.ReturnSceneName)
             ? "OverworldScene"
             : BattleSessionState.ReturnSceneName;
-        return_to_game loader = FindFirstObjectByType<return_to_game>();
+        return_to_game loader = FindFirstObjectByType<return_to_game>(); //Why is this here, it worked before -Viktor
         if (loader != null)
         {
             loader.load_level(targetScene);
