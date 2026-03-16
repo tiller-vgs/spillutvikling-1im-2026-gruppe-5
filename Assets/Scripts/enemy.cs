@@ -83,6 +83,7 @@ public class attacker : MonoBehaviour
         {
             dragonBonesView.PlayTestShootingAnimation();
         }
+        return_to_game.PlayGunshotSfx();
         yield return new WaitForSeconds(0.3f);
         anim.SetTrigger("Attack");
         yield return null;

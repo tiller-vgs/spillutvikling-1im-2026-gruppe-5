@@ -215,6 +215,28 @@ public class DirectionalDragonBonesView : MonoBehaviour
         return TryPlaySideShootingAnimation(false, false);
     }
 
+    public void FaceSide(float horizontalDirection)
+    {
+        if (Mathf.Abs(horizontalDirection) <= moveThreshold)
+        {
+            return;
+        }
+
+        if (!_isInitialized)
+        {
+            RefreshView();
+        }
+
+        if (_sideArmatureComponent == null)
+        {
+            return;
+        }
+
+        SetActiveView(ViewMode.Side);
+        SetSideFacing(horizontalDirection);
+        RefreshArmatureTransforms();
+    }
+
     private bool TryPlaySideShootingAnimation(bool requireGun, bool useWalkingBlend)
     {
         if (!_isInitialized)

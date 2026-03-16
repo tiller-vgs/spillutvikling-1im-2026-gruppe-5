@@ -159,6 +159,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   Trans: {fileID: 1549963300956347141}
+  mainMenuMusic: {fileID: 8300000, guid: 174cb5d32c3ce1d49b278dcb9da6cd9c, type: 3}
+  overworldMusic: {fileID: 8300000, guid: 11e1521081e8b01439bb38fa4372604d, type: 3}
+  fightMusicA: {fileID: 8300000, guid: 7e7252c46394a574f9e9ee7af0bdb140, type: 3}
+  fightMusicB: {fileID: 8300000, guid: 0f76a6943a289434d963aa009e232d9e, type: 3}
+  victoryClip: {fileID: 8300000, guid: 84dc3f0f109b1034c86d4ffeef6beb67, type: 3}
+  gunshotClip: {fileID: 8300000, guid: c2f4dc9e6e9d4a71a0e5a6f0e7c1b3d2, type: 3}
+  musicVolume: 1
+  victoryVolume: 1
+  gunshotVolume: 1
+  musicFadeDuration: 1
+  victoryFadeDuration: 1
 --- !u!1 &7317944979012849482
 GameObject:
   m_ObjectHideFlags: 0

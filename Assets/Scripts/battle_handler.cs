@@ -1,10 +1,12 @@
 using System.Collections;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class battle_handler : MonoBehaviour
 {
     private const float OptionsStaticY = 0f;
+    private const float EndScreenDuration = 3f;
 
     public GameObject winner;
 
@@ -26,6 +28,8 @@ public class battle_handler : MonoBehaviour
     private int actions = 1;
 
     public bool player_turn = true;
+
+    private bool _isEnding;
 
     
 
@@ -63,6 +67,11 @@ public class battle_handler : MonoBehaviour
 
     public void show_options()
     {
+        if (_isEnding)
+        {
+            return;
+        }
+
         if (optionsRect == null && !TryInitializeOptions())
         {
             return;
@@ -83,8 +92,16 @@ public class battle_handler : MonoBehaviour
 
     private void player_death()
     {
+        if (_isEnding)
+        {
+            return;
+        }
+
+        _isEnding = true;
+        player_turn = false;
         Debug.Log("death triggerd");
         death.SetTrigger("Death");
+        StartCoroutine(ReturnToOverworld(false));
     }
 
     private void hide_options() //might come in handy
@@ -124,6 +141,11 @@ public class battle_handler : MonoBehaviour
 
     public void attack(int damage = 1)
     {
+        if (_isEnding)
+        {
+            return;
+        }
+
         StartCoroutine(Attack(damage));
     }
 
@@ -141,6 +163,7 @@ public class battle_handler : MonoBehaviour
             {
                 dragonBonesView.PlayTestShootingAnimation();
             }
+            return_to_game.PlayGunshotSfx();
             yield return new WaitForSeconds(0.3f);
             enemy.GetComponent<Health_handler>().take_damage(damage); //this should take in and work with the wepon system, but it is not made yet, if ever gets made
             Invoke("enemy_turn", 2f);
@@ -179,6 +202,41 @@ public class battle_handler : MonoBehaviour
     }
     public void win()
     {
+        if (_isEnding)
+        {
+            return;
+        }
+
+        _isEnding = true;
+        player_turn = false;
         winner.gameObject.SetActive(true);
+        return_to_game.PlayVictoryMusic();
+        StartCoroutine(ReturnToOverworld(true));
+    }
+
+    private IEnumerator ReturnToOverworld(bool didWin)
+    {
+        if (didWin)
+        {
+            OverworldStoryState.MarkCompleted();
+        }
+        else
+        {
+            OverworldStoryState.ResetProgress();
+        }
+
+        yield return new WaitForSeconds(EndScreenDuration);
+
+        string targetScene = string.IsNullOrEmpty(BattleSessionState.ReturnSceneName)
+            ? "OverworldScene"
+            : BattleSessionState.ReturnSceneName;
+        return_to_game loader = FindFirstObjectByType<return_to_game>();
+        if (loader != null)
+        {
+            loader.load_level(targetScene);
+            yield break;
+        }
+
+        SceneManager.LoadScene(targetScene);
     }
 }

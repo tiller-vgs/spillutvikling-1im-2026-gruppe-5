@@ -118,6 +118,7 @@ public class Player_controller : MonoBehaviour
         if (_dragonBonesView != null && _dragonBonesView.PlayShootingAnimation())
         {
             _nextShootTime = Time.time + ShootCooldownSeconds;
+            return_to_game.PlayGunshotSfx();
         }
     }
 
