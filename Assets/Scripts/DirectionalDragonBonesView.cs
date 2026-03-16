@@ -95,6 +95,7 @@ public class DirectionalDragonBonesView : MonoBehaviour
     private bool _isRestPoseApplied;
     private bool _isInitialized;
     private bool _isShooting;
+    private bool _useWalkingBlendDuringShooting = true;
     private bool _isSideAnimationListenerRegistered;
     private bool _hasGun;
     private DBAnimationState _sideWalkingBlendState;
@@ -191,6 +192,7 @@ public class DirectionalDragonBonesView : MonoBehaviour
         if (_isShooting)
         {
             _isShooting = false;
+            _useWalkingBlendDuringShooting = true;
             ClearSideBlendStates();
             ResetSideAnimationState();
             _activeAnimation = string.Empty;
@@ -205,12 +207,44 @@ public class DirectionalDragonBonesView : MonoBehaviour
 
     public bool PlayShootingAnimation()
     {
+        return TryPlaySideShootingAnimation(true, true);
+    }
+
+    public bool PlayTestShootingAnimation()
+    {
+        return TryPlaySideShootingAnimation(false, false);
+    }
+
+    public void FaceSide(float horizontalDirection)
+    {
+        if (Mathf.Abs(horizontalDirection) <= moveThreshold)
+        {
+            return;
+        }
+
         if (!_isInitialized)
         {
             RefreshView();
         }
 
-        if (!_hasGun)
+        if (_sideArmatureComponent == null)
+        {
+            return;
+        }
+
+        SetActiveView(ViewMode.Side);
+        SetSideFacing(horizontalDirection);
+        RefreshArmatureTransforms();
+    }
+
+    private bool TryPlaySideShootingAnimation(bool requireGun, bool useWalkingBlend)
+    {
+        if (!_isInitialized)
+        {
+            RefreshView();
+        }
+
+        if (requireGun && !_hasGun)
         {
             return false;
         }
@@ -235,21 +269,32 @@ public class DirectionalDragonBonesView : MonoBehaviour
         }
 
         _isShooting = true;
+        _useWalkingBlendDuringShooting = useWalkingBlend;
         UpdateHandDisplays();
-        _sideShootingBlendState = PlaySideShootingBlendState(shootingAnimationName);
+        _sideShootingBlendState = PlaySideShootingBlendState(shootingAnimationName, useWalkingBlend);
         if (_sideShootingBlendState == null)
         {
             _isShooting = false;
+            _useWalkingBlendDuringShooting = true;
             UpdateHandDisplays();
             return false;
         }
 
-        if (_sideWalkingBlendState == null || _sideWalkingBlendState.isFadeOut)
+        if (useWalkingBlend && (_sideWalkingBlendState == null || _sideWalkingBlendState.isFadeOut))
         {
             _sideWalkingBlendState = PlaySideWalkingBlendState();
         }
 
-        UpdateSideWalkingBlendState();
+        if (useWalkingBlend)
+        {
+            UpdateSideWalkingBlendState();
+        }
+        else if (_sideWalkingBlendState != null)
+        {
+            _sideWalkingBlendState.FadeOut(0f, true);
+            _sideWalkingBlendState = null;
+        }
+
         _activeAnimation = shootingAnimationName;
         _isRestPoseApplied = false;
         return true;
@@ -695,7 +740,10 @@ public class DirectionalDragonBonesView : MonoBehaviour
     {
         if (_isShooting)
         {
-            UpdateSideWalkingBlendState();
+            if (_useWalkingBlendDuringShooting)
+            {
+                UpdateSideWalkingBlendState();
+            }
             return;
         }
 
@@ -786,6 +834,7 @@ public class DirectionalDragonBonesView : MonoBehaviour
         }
 
         _isShooting = false;
+        _useWalkingBlendDuringShooting = true;
         ClearSideBlendStates();
         ResetSideAnimationState();
         _activeAnimation = string.Empty;
@@ -885,7 +934,7 @@ public class DirectionalDragonBonesView : MonoBehaviour
         SetArmatureTransform(_sideArmatureComponent.transform, sideVisualOffset, GetSideVisualScale());
     }
 
-    private DBAnimationState PlaySideShootingBlendState(string animationName)
+    private DBAnimationState PlaySideShootingBlendState(string animationName, bool useWalkingBlend)
     {
         if (_sideArmatureComponent == null ||
             _sideArmatureComponent.animation == null ||
@@ -907,8 +956,11 @@ public class DirectionalDragonBonesView : MonoBehaviour
         animationConfig.group = SideShootingBlendGroup;
         animationConfig.resetToPose = false;
         animationConfig.displayControl = true;
-        animationConfig.RemoveBoneMask(_sideArmatureComponent.armature, RightLegBoneName, true);
-        animationConfig.RemoveBoneMask(_sideArmatureComponent.armature, LeftLegBoneName, true);
+        if (useWalkingBlend)
+        {
+            animationConfig.RemoveBoneMask(_sideArmatureComponent.armature, RightLegBoneName, true);
+            animationConfig.RemoveBoneMask(_sideArmatureComponent.armature, LeftLegBoneName, true);
+        }
         return animation.PlayConfig(animationConfig);
     }
 

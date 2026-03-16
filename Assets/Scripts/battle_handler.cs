@@ -1,9 +1,13 @@
 using System.Collections;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class battle_handler : MonoBehaviour
 {
+    private const float OptionsStaticY = 0f;
+    private const float EndScreenDuration = 3f;
+
     public GameObject winner;
 
     public GameObject player;
@@ -17,12 +21,15 @@ public class battle_handler : MonoBehaviour
     private Transform tf;
 
     private Transform options;
+    private RectTransform optionsRect;
 
     private int target = 0;
 
     private int actions = 1;
 
     public bool player_turn = true;
+
+    private bool _isEnding;
 
     
 
@@ -40,30 +47,36 @@ public class battle_handler : MonoBehaviour
 
     private void OnEnable()
     {
-        if (player_turn == false)
+        if (!TryInitializeOptions())
         {
-            options.position = new Vector2(options.position.x, options.position.y - 160);
+            return;
         }
 
-        tf = GetComponent<Transform>();
-        options = tf.Find("Canvas/Player_buttons").transform;
+        SetOptionsY(OptionsStaticY);
     }
 
     private void FixedUpdate()
     {
-        if (player_turn == true && options.position.y < 200) 
+        if (optionsRect == null && !TryInitializeOptions())
         {
-            //Debug.Log("movin' up");
-            options.position = new Vector2(options.position.x, options.position.y + 20);
+            return;
         }
-        else if (player_turn == false && options.position.y > 40)
-        {
-            options.position = new Vector2(options.position.x, options.position.y - 20);
-        }
+
+        SetOptionsY(OptionsStaticY);
     }
 
     public void show_options()
     {
+        if (_isEnding)
+        {
+            return;
+        }
+
+        if (optionsRect == null && !TryInitializeOptions())
+        {
+            return;
+        }
+
         float player_health = player.GetComponent<Health_handler>().health;
         if (player_health >= 1)
         {
@@ -79,13 +92,46 @@ public class battle_handler : MonoBehaviour
 
     private void player_death()
     {
+        if (_isEnding)
+        {
+            return;
+        }
+
+        _isEnding = true;
+        player_turn = false;
         Debug.Log("death triggerd");
         death.SetTrigger("Death");
+        StartCoroutine(ReturnToOverworld(false));
     }
 
     private void hide_options() //might come in handy
     {
         player_turn = false;
+    }
+
+    private bool TryInitializeOptions()
+    {
+        tf = GetComponent<Transform>();
+        options = tf != null ? tf.Find("Canvas/Player_buttons") : null;
+        optionsRect = options as RectTransform;
+        if (optionsRect == null)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private void SetOptionsY(float y)
+    {
+        if (optionsRect == null)
+        {
+            return;
+        }
+
+        Vector2 anchoredPosition = optionsRect.anchoredPosition;
+        anchoredPosition.y = y;
+        optionsRect.anchoredPosition = anchoredPosition;
     }
 
     public void GetSelectedEnemy(int index)//to be used later in case we get more enemies
@@ -95,6 +141,11 @@ public class battle_handler : MonoBehaviour
 
     public void attack(int damage = 1)
     {
+        if (_isEnding)
+        {
+            return;
+        }
+
         StartCoroutine(Attack(damage));
     }
 
@@ -107,6 +158,12 @@ public class battle_handler : MonoBehaviour
             yield return new WaitForSeconds(1);
             enemy = enemies.GetComponent<Transform>().Find($"enemy_{target}").gameObject;
             player.GetComponent<Animator>().SetTrigger("Attack");
+            var dragonBonesView = player.GetComponent<DirectionalDragonBonesView>();
+            if (dragonBonesView != null)
+            {
+                dragonBonesView.PlayTestShootingAnimation();
+            }
+            return_to_game.PlayGunshotSfx();
             yield return new WaitForSeconds(0.3f);
             enemy.GetComponent<Health_handler>().take_damage(damage); //this should take in and work with the wepon system, but it is not made yet, if ever gets made
             Invoke("enemy_turn", 2f);
@@ -145,6 +202,41 @@ public class battle_handler : MonoBehaviour
     }
     public void win()
     {
+        if (_isEnding)
+        {
+            return;
+        }
+
+        _isEnding = true;
+        player_turn = false;
         winner.gameObject.SetActive(true);
+        return_to_game.PlayVictoryMusic();
+        StartCoroutine(ReturnToOverworld(true));
+    }
+
+    private IEnumerator ReturnToOverworld(bool didWin)
+    {
+        if (didWin)
+        {
+            OverworldStoryState.MarkCompleted();
+        }
+        else
+        {
+            OverworldStoryState.ResetProgress();
+        }
+
+        yield return new WaitForSeconds(EndScreenDuration);
+
+        string targetScene = string.IsNullOrEmpty(BattleSessionState.ReturnSceneName)
+            ? "OverworldScene"
+            : BattleSessionState.ReturnSceneName;
+        return_to_game loader = FindFirstObjectByType<return_to_game>();
+        if (loader != null)
+        {
+            loader.load_level(targetScene);
+            yield break;
+        }
+
+        SceneManager.LoadScene(targetScene);
     }
 }
