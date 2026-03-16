@@ -233,6 +233,5 @@ public class battle_handler : MonoBehaviour
         return_to_game loader = FindFirstObjectByType<return_to_game>(); //Why is this here, it worked before -Viktor
         
 
-        SceneManager.LoadScene(targetScene);
     }
 }
