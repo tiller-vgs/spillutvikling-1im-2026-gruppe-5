@@ -3,9 +3,6 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 [DisallowMultipleComponent]
 public class EnemyVisualAutoReplacer : MonoBehaviour
@@ -15,9 +12,9 @@ public class EnemyVisualAutoReplacer : MonoBehaviour
         RegexOptions.Compiled
     );
 
-    private const string SkeletonAssetPath = "Assets/Characters/Enemy1/enemy1_ske.json";
-    private const string TextureAtlasAssetPath = "Assets/Characters/Enemy1/enemy1_tex.json";
-    private const string TextureAssetPath = "Assets/Characters/Enemy1/enemy1_tex.png";
+    private const string SkeletonResourcePath = "Enemy1/enemy1_ske";
+    private const string TextureAtlasResourcePath = "Enemy1/enemy1_tex";
+    private const string TextureResourcePath = "Enemy1/enemy1_tex";
     private const string ShootingAnimationName = "shootAnimation";
     private const float EnemyColliderWidthScale = 0.7f;
     private const float EnemyColliderHeightScale = 0.95f;
@@ -265,11 +262,9 @@ public class EnemyVisualAutoReplacer : MonoBehaviour
             return true;
         }
 
-#if UNITY_EDITOR
-        _skeletonData ??= AssetDatabase.LoadAssetAtPath<TextAsset>(SkeletonAssetPath);
-        _textureAtlasData ??= AssetDatabase.LoadAssetAtPath<TextAsset>(TextureAtlasAssetPath);
-        _textureAtlasTexture ??= AssetDatabase.LoadAssetAtPath<Texture2D>(TextureAssetPath);
-#endif
+        _skeletonData ??= Resources.Load<TextAsset>(SkeletonResourcePath);
+        _textureAtlasData ??= Resources.Load<TextAsset>(TextureAtlasResourcePath);
+        _textureAtlasTexture ??= Resources.Load<Texture2D>(TextureResourcePath);
 
         bool assetsLoaded = _skeletonData != null &&
                             _textureAtlasData != null &&
@@ -279,8 +274,7 @@ public class EnemyVisualAutoReplacer : MonoBehaviour
         {
             _missingAssetsWarningShown = true;
             Debug.LogWarning(
-                "EnemyVisualAutoReplacer could not load Enemy1 DragonBones assets automatically. " +
-                "This replacement currently relies on editor asset loading.",
+                "EnemyVisualAutoReplacer could not load Enemy1 DragonBones assets automatically.",
                 this
             );
         }

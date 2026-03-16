@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 [DisallowMultipleComponent]
 public class GunVisualAutoReplacer : MonoBehaviour
@@ -11,7 +8,7 @@ public class GunVisualAutoReplacer : MonoBehaviour
     private const string GunObjectName = "Gun";
     private const string GunClonePrefix = "Gun(";
     private const string GunVisualObjectName = "GunVisual";
-    private const string GunSpritePath = "Assets/Sprites/pistol.png";
+    private const string GunSpriteResourcePath = "Gun/pistol";
 
     [SerializeField] private float scanIntervalSeconds = 0.5f;
     [SerializeField] private float pulseAmplitude = 0.06f;
@@ -244,17 +241,15 @@ public class GunVisualAutoReplacer : MonoBehaviour
             return true;
         }
 
-#if UNITY_EDITOR
-        Object[] assets = AssetDatabase.LoadAllAssetsAtPath(GunSpritePath);
-        for (int i = 0; i < assets.Length; i++)
+        Sprite[] sprites = Resources.LoadAll<Sprite>(GunSpriteResourcePath);
+        for (int i = 0; i < sprites.Length; i++)
         {
-            if (assets[i] is Sprite sprite)
+            if (sprites[i] != null)
             {
-                _gunSprite = sprite;
+                _gunSprite = sprites[i];
                 break;
             }
         }
-#endif
 
         bool isLoaded = _gunSprite != null;
         if (!isLoaded && !_missingSpriteWarningShown)
