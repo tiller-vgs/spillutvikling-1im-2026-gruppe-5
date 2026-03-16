@@ -221,14 +221,12 @@ public class return_to_game : MonoBehaviour
             if (sceneName == "Main Menu")
             {
                 PlayMusic(_mainMenuMusic, true);
-                FadeOutOverlay();
                 return;
             }
 
             if (sceneName == "OverworldScene")
             {
                 PlayMusic(_overworldMusic, true);
-                FadeOutOverlay();
                 return;
             }
 
@@ -265,34 +263,22 @@ public class return_to_game : MonoBehaviour
                 StopCoroutine(_musicRoutine);
             }
 
-            if (_activeMusicSource.clip == clip && _activeMusicSource.isPlaying)
-            {
-                _musicRoutine = StartCoroutine(FadeSourceVolume(_activeMusicSource, _musicVolume, _musicFadeDuration));
-                return;
-            }
-
-            AudioSource nextSource = _activeMusicSource == _musicSourceA ? _musicSourceB : _musicSourceA;
-            nextSource.clip = clip;
-            nextSource.loop = loop;
-            nextSource.volume = 0f;
-            nextSource.Play();
-            _musicRoutine = StartCoroutine(CrossfadeMusic(_activeMusicSource, nextSource, _musicFadeDuration));
-            _activeMusicSource = nextSource;
-        }
-
-        private void FadeOutOverlay()
-        {
-            if (!_overlaySource.isPlaying)
-            {
-                return;
-            }
-
             if (_overlayRoutine != null)
             {
                 StopCoroutine(_overlayRoutine);
             }
 
-            _overlayRoutine = StartCoroutine(FadeOutAndStop(_overlaySource, _victoryFadeDuration));
+            AudioSource inactiveSource = _activeMusicSource == _musicSourceA ? _musicSourceB : _musicSourceA;
+            if (_activeMusicSource.clip == clip &&
+                _activeMusicSource.isPlaying &&
+                !inactiveSource.isPlaying &&
+                !_overlaySource.isPlaying)
+            {
+                _musicRoutine = StartCoroutine(FadeSourceVolume(_activeMusicSource, _musicVolume, _musicFadeDuration));
+                return;
+            }
+
+            _musicRoutine = StartCoroutine(SwitchMusic(clip, loop));
         }
 
         private AudioSource CreateSource(string sourceName)
@@ -306,56 +292,29 @@ public class return_to_game : MonoBehaviour
             return source;
         }
 
-        private IEnumerator CrossfadeMusic(AudioSource fromSource, AudioSource toSource, float duration)
+        private IEnumerator SwitchMusic(AudioClip clip, bool loop)
         {
-            float elapsed = 0f;
-            float fromStartVolume = fromSource != null && fromSource.isPlaying ? fromSource.volume : 0f;
-
-            while (elapsed < duration)
+            if (_overlaySource.isPlaying)
             {
-                elapsed += Time.unscaledDeltaTime;
-                float t = Mathf.Clamp01(elapsed / duration);
-                if (fromSource != null)
-                {
-                    fromSource.volume = Mathf.Lerp(fromStartVolume, 0f, t);
-                }
-
-                toSource.volume = Mathf.Lerp(0f, _musicVolume, t);
-                yield return null;
+                yield return FadeOutSource(_overlaySource, _victoryFadeDuration, true);
+                _overlayRoutine = null;
             }
 
-            if (fromSource != null)
-            {
-                fromSource.Stop();
-                fromSource.clip = null;
-                fromSource.volume = 0f;
-            }
+            yield return FadeOutMusicSources(_musicFadeDuration);
 
-            toSource.volume = _musicVolume;
-            _musicRoutine = null;
+            AudioSource nextSource = _activeMusicSource == _musicSourceA ? _musicSourceB : _musicSourceA;
+            nextSource.clip = clip;
+            nextSource.loop = loop;
+            nextSource.volume = 0f;
+            nextSource.Play();
+            _activeMusicSource = nextSource;
+            yield return FadeSourceVolume(nextSource, _musicVolume, _musicFadeDuration);
         }
 
         private IEnumerator FadeOutMusicSources(float duration)
         {
-            float elapsed = 0f;
-            float volumeA = _musicSourceA.volume;
-            float volumeB = _musicSourceB.volume;
-
-            while (elapsed < duration)
-            {
-                elapsed += Time.unscaledDeltaTime;
-                float t = Mathf.Clamp01(elapsed / duration);
-                _musicSourceA.volume = Mathf.Lerp(volumeA, 0f, t);
-                _musicSourceB.volume = Mathf.Lerp(volumeB, 0f, t);
-                yield return null;
-            }
-
-            _musicSourceA.Stop();
-            _musicSourceB.Stop();
-            _musicSourceA.clip = null;
-            _musicSourceB.clip = null;
-            _musicSourceA.volume = 0f;
-            _musicSourceB.volume = 0f;
+            yield return FadeOutSource(_musicSourceA, duration, true);
+            yield return FadeOutSource(_musicSourceB, duration, true);
             _activeMusicSource = _musicSourceA;
             _musicRoutine = null;
         }
@@ -383,20 +342,7 @@ public class return_to_game : MonoBehaviour
 
         private IEnumerator FadeOutAndStop(AudioSource source, float duration)
         {
-            float elapsed = 0f;
-            float startVolume = source.volume;
-
-            while (elapsed < duration)
-            {
-                elapsed += Time.unscaledDeltaTime;
-                float t = Mathf.Clamp01(elapsed / duration);
-                source.volume = Mathf.Lerp(startVolume, 0f, t);
-                yield return null;
-            }
-
-            source.Stop();
-            source.clip = null;
-            source.volume = 0f;
+            yield return FadeOutSource(source, duration, true);
             _overlayRoutine = null;
         }
 
@@ -415,6 +361,45 @@ public class return_to_game : MonoBehaviour
 
             source.volume = targetVolume;
             _musicRoutine = null;
+        }
+
+        private IEnumerator FadeOutSource(AudioSource source, float duration, bool stopAfterFade)
+        {
+            if (source == null)
+            {
+                yield break;
+            }
+
+            if (!source.isPlaying && source.volume <= 0f)
+            {
+                if (stopAfterFade)
+                {
+                    source.Stop();
+                    source.clip = null;
+                    source.volume = 0f;
+                }
+
+                yield break;
+            }
+
+            float elapsed = 0f;
+            float startVolume = source.volume;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
+                source.volume = Mathf.Lerp(startVolume, 0f, t);
+                yield return null;
+            }
+
+            source.volume = 0f;
+
+            if (stopAfterFade)
+            {
+                source.Stop();
+                source.clip = null;
+            }
         }
     }
 }
